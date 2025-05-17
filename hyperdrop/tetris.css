@@ -1,42 +1,392 @@
+/* Global Variables */
+:root {
+  --board-bg: #3a00ac; /* UPDATED: Deep purple background */
+  --grid-color: #1782d4; /* UPDATED: Bright blue grid lines */
+  --panel-bg: rgba(26, 26, 46, 0.7); /* Semi-transparent dark blue */
+  --text-color: #e0e1dd; /* Off-white */
+  --highlight-color: #fca311; /* Orange highlight */
+  --btn-color: #147df5; /* Bright blue */
+  --btn-hover-color: #0a6dd9;
+  --btn-secondary-color: #6c757d;
+  --btn-secondary-hover-color: #5a6268;
+  --btn-danger-color: #dc3545; /* For Reset Scores button */
+  --btn-danger-hover-color: #c82333; /* For Reset Scores button hover */
+  --error-color: #dc3545; /* Red for errors */
+  --font-main: 'Press Start 2P', cursive; /* Pixel font */
+  --board-border-width: 2px;
+}
 
-body {
+/* Basic Reset */
+* {
+  box-sizing: border-box;
   margin: 0;
-  background: black;
+  padding: 0;
+}
+
+/* General utility class for hiding elements */
+.hidden {
+    display: none;
+}
+
+/* Body Styling - Full Screen Black Background */
+body {
+  font-family: var(--font-main), Arial, sans-serif; /* Apply pixel font */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  font-family: Arial, sans-serif;
+  background-color: #000000; /* Black background */
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden; /* Prevent scrollbars */
+  touch-action: manipulation; /* Prevent default touch actions like zoom */
+  color: var(--text-color);
+  padding: 10px; /* Small padding */
+  line-height: 1.6; /* Improve readability */
 }
 
-canvas {
-  background: url('hyperdrop_background.png') no-repeat center center;
-  background-size: cover;
-  border: 2px solid #fff;
+/* Screen Styling (Start, Leaderboard) */
+.screen {
+  position: fixed; /* Overlay everything */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9); /* Dark overlay */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 20; /* Ensure screens are on top */
+  padding: 20px;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; /* Smooth transition */
 }
 
-.overlay {
+.screen.hidden { /* This is for the whole screen containers, not the general utility .hidden class */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none; /* Prevent interaction when hidden */
+}
+.screen.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+
+.screen-content {
+  background-color: var(--board-bg); /* Use board background */
+  padding: 30px 40px;
+  border-radius: 10px;
+  border: 2px solid var(--highlight-color);
+  max-width: 90%;
+  width: 400px; /* Max width for content box */
+  box-shadow: 0 0 20px rgba(252, 163, 17, 0.5); /* Highlight glow */
+}
+
+.screen h1, .screen h2 {
+  color: var(--highlight-color);
+  margin-bottom: 25px;
+  font-size: clamp(1.5rem, 5vw, 2rem); /* Responsive font size */
+}
+
+/* Start Screen Specifics */
+.name-entry {
+  margin-bottom: 20px;
+}
+
+.name-entry label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.name-entry input[type="text"] {
+  font-family: var(--font-main), Arial, sans-serif; /* Use pixel font */
+  padding: 10px 15px;
+  border: 2px solid var(--grid-color);
+  background-color: #fff; /* White background */
+  color: #333; /* Dark text */
+  border-radius: 5px;
+  width: 100%;
+  max-width: 300px; /* Limit input width */
+  font-size: 0.9rem;
+  text-align: center;
+}
+.name-entry input[type="text"]:focus {
+  outline: none;
+  border-color: var(--highlight-color);
+  box-shadow: 0 0 5px rgba(252, 163, 17, 0.5);
+}
+
+.error-message {
+  color: var(--error-color);
+  font-size: 0.8rem;
+  height: 1.2em; /* Reserve space to prevent layout shift */
+  margin-top: 5px;
+}
+
+/* Leaderboard Specifics */
+#high-score-list {
+  list-style: none; /* Remove default bullets */
+  padding: 0;
+  margin: 0 auto 20px auto; /* Center list */
+  max-height: 200px; /* Adjusted max height slightly */
+  overflow-y: auto;
+  max-width: 300px;
+  text-align: left; /* Align text left within list */
+  border: 1px solid var(--grid-color);
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+#high-score-list li {
+  padding: 5px 0;
+  font-size: 0.85rem;
+  border-bottom: 1px dashed var(--grid-color);
+}
+#high-score-list li:last-child {
+  border-bottom: none;
+}
+
+/* Button Styling */
+.btn {
+  font-family: var(--font-main), Arial, sans-serif;
+  background-color: var(--btn-color);
+  border: none;
+  color: white;
+  padding: 12px 25px;
+  text-align: center;
+  display: inline-block;
+  font-size: 0.9rem;
+  margin: 10px 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  touch-action: manipulation;
+  transition: background-color 0.2s ease;
+  text-transform: uppercase; /* Optional: make button text uppercase */
+}
+.btn:hover {
+  background-color: var(--btn-hover-color);
+}
+
+.btn-secondary {
+  background-color: var(--btn-secondary-color);
+}
+.btn-secondary:hover {
+  background-color: var(--btn-secondary-hover-color);
+}
+
+.btn-danger { /* For Reset Scores button */
+  background-color: var(--btn-danger-color);
+}
+.btn-danger:hover {
+  background-color: var(--btn-danger-hover-color);
+}
+
+
+/* Game Area Styling */
+#game-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+#game-area.hidden { /* This is for the game area screen itself */
+  display: none;
+}
+
+.game-title {
+  margin-bottom: 15px;
+  font-size: clamp(1.2rem, 4vw, 1.8rem);
+  color: var(--text-color);
+}
+
+.game-area-wrapper {
+  position: relative;
+  margin: auto;
+  flex-shrink: 0;
+  /* Width and height set by JS */
+}
+
+.board {
+  background-color: var(--board-bg); /* Uses updated variable */
   position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  touch-action: none; /* Disable scroll/zoom on board */
+  z-index: 1;
+  border: var(--board-border-width) solid var(--grid-color); /* Uses updated variable for border */
+}
+
+.grid-cell {
+  position: absolute;
+  box-sizing: border-box;
+  background-color: transparent;
+  border: 1px solid var(--grid-color); /* Uses updated variable */
+  opacity: 0.4; /* Adjusted opacity slightly */
+  z-index: 0; /* Behind blocks */
+}
+
+.block {
+  position: absolute;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.4); /* Slightly darker border */
+  background-size: cover;
+  background-position: center;
+  z-index: 2; /* Above grid */
+  border-radius: 2px; /* Slight rounding */
+}
+
+/* Game Overlays (Stats, Next Piece) */
+.next-piece-container {
+  position: absolute;
+  top: 10px;
+  right: 10px; /* Adjusted for potential scrollbar if board is too wide */
+  width: 80px;
+  height: 80px;
+  background-color: var(--panel-bg);
+  border: 1px solid var(--grid-color);
+  padding: 5px;
+  z-index: 3;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.8);
-  z-index: 10;
 }
 
-.popup {
-  background: black;
-  padding: 20px;
-  border: 2px solid white;
+.next-piece {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.stats {
+  position: absolute;
+  top: 10px;
+  left: 10px; /* Adjusted for potential scrollbar */
+  width: auto;
+  padding: 8px 12px;
+  background-color: var(--panel-bg);
+  color: var(--text-color);
+  border: 1px solid var(--grid-color);
+  z-index: 3;
+  border-radius: 4px;
+  font-size: 0.8rem; /* Smaller font for stats */
+}
+
+.stats p {
+  margin: 2px 0;
+  white-space: nowrap;
+}
+
+/* Original Game Over Screen (inside game-area, now mostly superseded) */
+.game-over {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 25px;
   text-align: center;
-  color: white;
+  border-radius: 10px;
+  z-index: 10; 
+  /* display: none; by default in JS if used */
+  width: 85%;
+  max-width: 300px;
+  border: 2px solid var(--highlight-color);
+}
+.game-over h2 {
+  margin-bottom: 15px;
+  color: var(--highlight-color);
+  font-size: 1.5rem;
+}
+.game-over p {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+.game-over span {
+  font-weight: bold;
+  color: var(--highlight-color);
+}
+.game-over button {
+  margin-top: 10px;
 }
 
-#score-bar {
-  margin-top: 10px;
-  color: white;
-  font-size: 1.2em;
+
+/* Desktop Only Elements */
+.desktop-only {
+  display: none; /* Hidden by default (mobile first) */
+}
+
+/* Responsive Styles */
+@media (min-width: 768px) {
+  /* Show desktop elements */
+  .desktop-only {
+      display: block;
+  }
+
+  /* Style desktop controls */
+  .controls.desktop-only {
+      width: 200px;
+      padding: 15px;
+      background-color: var(--panel-bg);
+      color: var(--text-color);
+      border: 1px solid var(--grid-color);
+      border-radius: 5px;
+      margin-top: 20px;
+      font-size: 0.8rem;
+  }
+  .controls h3 {
+      margin-bottom: 10px;
+      text-align: center;
+      color: var(--highlight-color);
+      font-size: 0.9rem;
+  }
+  .compact-controls p {
+      margin: 5px 0;
+  }
+  .key {
+      display: inline-block;
+      background-color: #444;
+      color: white;
+      padding: 3px 6px;
+      border-radius: 3px;
+      margin: 2px;
+      font-size: 0.8rem;
+      min-width: 1.8em;
+      text-align: center;
+  }
+
+  /* Adjust overlay sizes for desktop */
+  .next-piece-container {
+      width: 100px;
+      height: 100px;
+  }
+  .stats {
+      padding: 10px 15px;
+      font-size: 0.9rem;
+  }
+}
+
+/* Minor adjustments for very small screens */
+@media (max-height: 450px) and (max-width: 767px) {
+  /* Reduce overlay sizes slightly */
+  .next-piece-container {
+      width: 60px;
+      height: 60px;
+      top: 5px;
+      right: 5px;
+  }
+  .stats {
+      top: 5px;
+      left: 5px;
+      padding: 4px 8px;
+      font-size: 0.7rem;
+  }
 }
