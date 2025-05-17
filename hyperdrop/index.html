@@ -1,1 +1,31 @@
-<!-- index.html placeholder -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HyperDrop</title>
+  <link rel="stylesheet" href="tetris.css" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+</head>
+<body>
+  <div id="start-screen" class="overlay">
+    <div class="popup">
+      <h1>Welcome to HyperDrop</h1>
+      <input type="text" id="username" placeholder="Enter your name" />
+      <button onclick="startGame()">Start Game</button>
+      <button onclick="showLeaderboard()">View Leaderboard</button>
+    </div>
+  </div>
+  <div id="leaderboard-screen" class="overlay" style="display:none;">
+    <div class="popup">
+      <h2>Top Scores</h2>
+      <ul id="leaderboard-list"></ul>
+      <button onclick="goToMenu()">Main Menu</button>
+    </div>
+  </div>
+  <canvas id="gameCanvas" width="320" height="640"></canvas>
+  <div id="score-bar">Score: <span id="score">0</span> | Level: <span id="level">1</span></div>
+  <script src="tetris.js"></script>
+</body>
+</html>
