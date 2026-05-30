@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HyperPieces</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      background: #8BF5C5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      font-family: 'Pacifico', cursive;
+      text-align: center;
+      color: #000000;
+      overflow-x: hidden;
+    }
+    .fade-in {
+      opacity: 0;
+      animation: fadeIn 1s ease-in forwards;
+    }
+    .fade-in:nth-child(1) { animation-delay: 0.2s; }
+    .fade-in:nth-child(2) { animation-delay: 0.4s; }
+    .fade-in:nth-child(3) { animation-delay: 0.6s; }
+    .fade-in:nth-child(4) { animation-delay: 0.8s; }
+    .fade-in:nth-child(5) { animation-delay: 1s; }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    img {
+      width: 350px;
+      max-width: 80%;
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-size: 60px;
+      margin: 10px 0 30px;
+    }
+    .cta {
+      margin-bottom: 30px;
+    }
+    .play-button {
+      display: inline-block;
+      background-color: #000000;
+      color: #8BF5C5;
+      font-size: 22px;
+      font-weight: bold;
+      padding: 16px 32px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.3s;
+    }
+    .play-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    }
+    .links a {
+      display: block;
+      margin: 8px 0;
+      padding: 12px 24px;
+      text-decoration: none;
+      background: #000000;
+      color: #8BF5C5;
+      border-radius: 8px;
+      font-size: 18px;
+      transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+      width: 80%;
+      max-width: 300px;
+    }
+    .links a:hover {
+      background: #333333;
+      color: #ffffff;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <img src="assets/header.png" alt="Header Logo" class="fade-in" />
+  <h1 class="fade-in">HyperPieces</h1>
+
+  <div class="cta fade-in">
+    <a href="hyperdrop/index.html" class="play-button">🎮 Play HyperDrop</a>
+  </div>
+
+  <div class="links fade-in">
+    <a href="https://x.com/HyperPiecesCTO" target="_blank">Follow Twitter</a>
+    <a href="https://discord.gg/9nyuGTdqmz" target="_blank">Join Discord</a>
+    <a href="https://drip.trade/collections/hyperpieces?tab=items" target="_blank">Trade on Drip.Trade</a>
+  </div>
+
+</body>
+</html>
