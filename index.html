@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,83 +6,130 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
   <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
     body {
       margin: 0;
-      padding: 40px 20px;
+      padding: 40px 20px 80px;
       background: #8BF5C5;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
       font-family: 'Pacifico', cursive;
       text-align: center;
-      color: #000000;
+      color: #000;
       overflow-x: hidden;
     }
-    .fade-in {
-      opacity: 0;
-      animation: fadeIn 1s ease-in forwards;
-    }
+
+    .fade-in { opacity: 0; animation: fadeIn 1s ease-in forwards; }
     .fade-in:nth-child(1) { animation-delay: 0.2s; }
     .fade-in:nth-child(2) { animation-delay: 0.4s; }
     .fade-in:nth-child(3) { animation-delay: 0.6s; }
     .fade-in:nth-child(4) { animation-delay: 0.8s; }
-    .fade-in:nth-child(5) { animation-delay: 1s; }
+    .fade-in:nth-child(5) { animation-delay: 1.0s; }
+    .fade-in:nth-child(6) { animation-delay: 1.2s; }
+    @keyframes fadeIn { to { opacity: 1; } }
 
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
+    img.hero { width: 350px; max-width: 80%; margin-bottom: 10px; }
+    h1 { font-size: 60px; margin: 10px 0 30px; }
 
-    img {
-      width: 350px;
-      max-width: 80%;
-      margin-bottom: 10px;
-    }
-    h1 {
-      font-size: 60px;
-      margin: 10px 0 30px;
-    }
-    .cta {
-      margin-bottom: 30px;
-    }
+    .cta { margin-bottom: 30px; }
     .play-button {
-      display: inline-block;
-      background-color: #000000;
-      color: #8BF5C5;
-      font-size: 22px;
-      font-weight: bold;
-      padding: 16px 32px;
-      border-radius: 10px;
-      text-decoration: none;
+      display: inline-block; background: #000; color: #8BF5C5;
+      font-size: 22px; font-weight: bold; padding: 16px 32px;
+      border-radius: 10px; text-decoration: none;
       transition: transform 0.2s, box-shadow 0.3s;
     }
-    .play-button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-    }
+    .play-button:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0,0,0,0.4); }
+
     .links a {
-      display: block;
-      margin: 8px 0;
-      padding: 12px 24px;
-      text-decoration: none;
-      background: #000000;
-      color: #8BF5C5;
-      border-radius: 8px;
-      font-size: 18px;
+      display: block; margin: 8px 0; padding: 12px 24px;
+      text-decoration: none; background: #000; color: #8BF5C5;
+      border-radius: 8px; font-size: 18px;
       transition: background 0.3s, color 0.3s, box-shadow 0.3s;
-      width: 80%;
-      max-width: 300px;
+      width: 80%; max-width: 300px;
     }
-    .links a:hover {
-      background: #333333;
-      color: #ffffff;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    .links a:hover { background: #333; color: #fff; box-shadow: 0 0 15px rgba(0,0,0,0.4); }
+
+    /* ── Trait Library ── */
+    .trait-library { width: 100%; max-width: 900px; margin-top: 60px; }
+    .trait-library h2 { font-size: 42px; margin: 0 0 8px; }
+    .trait-library .subtitle {
+      font-size: 14px; opacity: 0.6; margin: 0 0 32px;
+      font-family: Arial, sans-serif; letter-spacing: 0.5px;
+    }
+
+    .category-block { margin-bottom: 14px; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.12); }
+
+    .category-toggle {
+      width: 100%; background: #000; color: #8BF5C5; border: none;
+      padding: 18px 24px; font-family: 'Pacifico', cursive; font-size: 20px;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: space-between; gap: 12px; transition: background 0.2s;
+    }
+    .category-toggle:hover { background: #1a1a1a; }
+    .category-toggle .cat-left { display: flex; align-items: center; gap: 12px; }
+    .category-toggle .cat-icon { font-size: 22px; }
+    .category-toggle .cat-count {
+      font-family: Arial, sans-serif; font-size: 13px;
+      background: rgba(139,245,197,0.2); border: 1px solid rgba(139,245,197,0.4);
+      border-radius: 20px; padding: 2px 10px; white-space: nowrap;
+    }
+    .category-toggle .arrow { font-size: 14px; transition: transform 0.3s; flex-shrink: 0; }
+    .category-toggle.open .arrow { transform: rotate(180deg); }
+
+    .trait-panel { display: none; background: rgba(0,0,0,0.04); padding: 20px; }
+    .trait-panel.open { display: block; }
+
+    .trait-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; }
+
+    .trait-card { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
+    .trait-img {
+      width: 100%; aspect-ratio: 1; border-radius: 10px; overflow: hidden;
+      background: var(--cat-color, #ccc); display: flex; align-items: center;
+      justify-content: center; position: relative;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .trait-card:hover .trait-img { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,0.25); }
+
+    .trait-img img {
+      width: 100%; height: 100%; object-fit: cover;
+      position: absolute; inset: 0;
+    }
+    /* Fallback initials shown while image loads or if it fails */
+    .trait-img .initials {
+      font-family: 'Pacifico', cursive; font-size: 24px;
+      color: rgba(255,255,255,0.85); text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      z-index: 1;
+    }
+    .trait-img img.loaded + .initials { display: none; }
+
+    .trait-name {
+      font-family: Arial, sans-serif; font-size: 11px; font-weight: 700;
+      text-align: center; color: #000; line-height: 1.3;
+      text-transform: uppercase; letter-spacing: 0.3px;
+    }
+
+    /* 1/1 gold glow */
+    .trait-card.one-of-one .trait-img {
+      box-shadow: 0 0 0 2px #FFD700, 0 2px 12px rgba(255,215,0,0.4);
+    }
+    .trait-card.one-of-one:hover .trait-img {
+      box-shadow: 0 0 0 2px #FFD700, 0 6px 22px rgba(255,215,0,0.6);
+    }
+
+    @media (max-width: 480px) {
+      .trait-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
+      .trait-img .initials { font-size: 18px; }
+      h1 { font-size: 42px; }
     }
   </style>
 </head>
 <body>
 
-  <img src="assets/header.png" alt="Header Logo" class="fade-in" />
+  <img src="assets/header.png" alt="HyperPieces Logo" class="hero fade-in" />
   <h1 class="fade-in">HyperPieces</h1>
 
   <div class="cta fade-in">
@@ -95,6 +141,225 @@
     <a href="https://discord.gg/9nyuGTdqmz" target="_blank">Join Discord</a>
     <a href="https://drip.trade/collections/hyperpieces?tab=items" target="_blank">Trade on Drip.Trade</a>
   </div>
+
+  <div class="trait-library fade-in">
+    <h2>Trait Library</h2>
+    <p class="subtitle">7 categories &nbsp;·&nbsp; 87 traits &nbsp;·&nbsp; 15 one-of-ones</p>
+    <div id="categories-container"></div>
+  </div>
+
+  <script>
+    // IPFS image helper — routes through weserv CDN for fast loading
+    const BASE = 'bafybeibgbwnr6ce3krsdybyid6wulhflbyoa4hvj22cttnhnefdfctnkca';
+    function ipfs(cid) {
+      return 'https://images.weserv.nl/?url=https%3A%2F%2Fipfs.io%2Fipfs%2F' + cid + '&w=300&q=85&output=webp';
+    }
+
+    // ── Trait data with real example images from the collection ──────────────
+    const CATEGORIES = [
+      {
+        name: "1/1's", icon: "⭐", color: "#C8960C", oneOfOne: true,
+        traits: [
+          { name: "Discord",          img: ipfs(BASE + '/1.jpeg') },
+          { name: "Red Cross",        img: ipfs(BASE + '/1884.jpeg') },
+          { name: "Gary",             img: ipfs(BASE + '/2018.jpeg') },
+          { name: "THC",              img: ipfs(BASE + '/2213.jpeg') },
+          { name: "Pixel Patrick",    img: ipfs(BASE + '/1955.jpeg') },
+          { name: "Giagantic Piece",  img: null },
+          { name: "Whole Gang",       img: ipfs(BASE + '/2198.jpeg') },
+          { name: "GyperFrog",        img: ipfs(BASE + '/1028.jpeg') },
+          { name: "Hexagon",          img: ipfs(BASE + '/1600.jpeg') },
+          { name: "Hypio",            img: ipfs(BASE + '/1298.jpeg') },
+          { name: "Rainbow Shard",    img: ipfs(BASE + '/1472.jpeg') },
+          { name: "Invincible Wizard",img: ipfs(BASE + '/1402.jpeg') },
+          { name: "Hyper",            img: null },
+          { name: "3D",               img: null },
+          { name: "Purrtardio",       img: ipfs(BASE + '/1997.jpeg') },
+        ]
+      },
+      {
+        name: "Background", icon: "🌄", color: "#3A7BD5",
+        traits: [
+          { name: "Rainbow", img: ipfs('QmNfXQtS97VV6uCrBprbpayXZv9w2338JXLQ2cLz1CyF5a') },
+          { name: "Sand",    img: ipfs('QmRW4Z3KoxmHdwrDWHz2zTqzo9XLVx4UvnrZkXH5Rbpk7f') },
+          { name: "Hyper",   img: ipfs('QmY4V3sNKR9Po66skEFSZkPFY9WexhT9MtQC2mMf8Y6HyB') },
+          { name: "Blue",    img: ipfs('QmQjh9iua29DrnDy3kz66jdvW85zxSSMvDVWwo6mGowwU3') },
+          { name: "Red",     img: ipfs('QmT2o29Knu2c9LZBtymer6PTDW8ULbPdpngnaJNsjYVVGM') },
+          { name: "Earth",   img: ipfs('QmUGqjh3DJbSW92Xu6uE4Nh2jmwdCpTgSQ9ai1NcPM7uVG') },
+          { name: "Yellow",  img: ipfs('QmUCnKFQT6i6FJwWcx8QEAEFdNfGadEQwyaRM9N7pwMLXu') },
+          { name: "Matrix",  img: ipfs('QmciLszKskZ7X3uxPaRvyEdEaB7qNUJUGrLB5ATetfGnHr') },
+          { name: "White",   img: ipfs('QmVxt6fbs6aHpMhCgGfnsExUaC91yp3VzaJRy8NVk9fz5R') },
+        ]
+      },
+      {
+        name: "Emotion", icon: "😊", color: "#D44B9C",
+        traits: [
+          { name: "Vamp",      img: ipfs('QmdGPHpQTTKXSbfrcT2H2HnEiY1k9CvamkTh3YN627u2u8') },
+          { name: "Cheeks",    img: ipfs('QmabLgyVrUVbKGKtiDrCRZUzPWvHbkaWd1D1ccGgJYTti6') },
+          { name: "Joy",       img: ipfs('QmXeGQu6hp9j2My7xKEhhahUJjnb63PR1pRbg9QHxoSmMK') },
+          { name: "Normal",    img: ipfs('QmTatimHUEF2PhtWgD5LD5pYQgETzeeW5ooMHmS2v2CgeC') },
+          { name: "Silly",     img: ipfs('QmeSWd96Ay6j4gipkjrJotdMVBzLjfbykpMP1XT78oc8YB') },
+          { name: "Sleeping",  img: ipfs('QmWpTNMdLdgwToZW31C1KSXqtZhsyeHKHNyQJcp9U66ycr') },
+          { name: "Confused",  img: ipfs('QmcjWDdpij189YfhyynbhRBysZt3fZry43Xob67TWWNmwP') },
+          { name: "Sad",       img: ipfs('Qmc78faWc6ss1arspqtZwJJ5fkho1XnKJowLBnXWEuft6Q') },
+          { name: "Zombie",    img: ipfs('QmcGgR4MHnY7v4Tjn5HASTsFSH54GPgynA7NC2jdaLwskA') },
+          { name: "Surprised", img: ipfs('QmVxt6fbs6aHpMhCgGfnsExUaC91yp3VzaJRy8NVk9fz5R') },
+          { name: "Visor",     img: ipfs('QmUCnKFQT6i6FJwWcx8QEAEFdNfGadEQwyaRM9N7pwMLXu') },
+          { name: "Dead",      img: ipfs('QmSn3VSyVrBX54AuXobJn6p92NdyQHfkJhk7nG2omnKCTc') },
+          { name: "Mutant",    img: ipfs('QmRW4Z3KoxmHdwrDWHz2zTqzo9XLVx4UvnrZkXH5Rbpk7f') },
+        ]
+      },
+      {
+        name: "Head", icon: "🎩", color: "#7B4F2E",
+        traits: [
+          { name: "Fire",            img: ipfs('QmRqtbwuHqcAHP4ThL1D1osnG63Fr1zqK1HQdsxm8C4rxg') },
+          { name: "Western Hypni",   img: ipfs('QmXpeptgwxUAio5fvPfuSLYapKQwREf6FGpzm3anTmKEMy') },
+          { name: "Rose Hair",       img: ipfs('QmRtHSNLrfWQCQ9tFWsoeAXwBDQ2jdky2Po8BhKSNHZxWd') },
+          { name: "Mage Cap",        img: ipfs('QmRW4Z3KoxmHdwrDWHz2zTqzo9XLVx4UvnrZkXH5Rbpk7f') },
+          { name: "Magic Cube",      img: ipfs('QmcAGTbh4ahkJNkRRugeQ5vn3nupmi76MWcKr1suH37Mq2') },
+          { name: "Wi-Fi",           img: ipfs('QmNWQWjMLxnqqg6bJ7DcBp2zrxFRfJjEqWfknnPfb5ADuW') },
+          { name: "Viking",          img: ipfs('QmQjh9iua29DrnDy3kz66jdvW85zxSSMvDVWwo6mGowwU3') },
+          { name: "Native American", img: ipfs('Qmao8y9RGe42tDmGdRUDLBymrAsUKzr9kaHU4pw9FfhQAn') },
+          { name: "Horn",            img: ipfs('QmPh6jcszPe5fVntn2UtKcMFNDdr9UnBi5PV671pfsDh59') },
+          { name: "Fluff Hair",      img: ipfs('QmeSWd96Ay6j4gipkjrJotdMVBzLjfbykpMP1XT78oc8YB') },
+          { name: "Fedora",          img: ipfs('QmUVY8wTUCvonqmjcAwqbJ3Hrd7W3ng3WiMZjvSxnTi6RN') },
+          { name: "UFO",             img: ipfs('QmVxt6fbs6aHpMhCgGfnsExUaC91yp3VzaJRy8NVk9fz5R') },
+          { name: "Crown",           img: ipfs('QmPywsbKaiTNmYyggmezf1by5FHRLatWkvyLxM36FR4if9') },
+          { name: "Sombrero",        img: ipfs('Qmaid52NBxLYn4PxeCwZTVbJp7v9QFrfCyfobYS3CMQgza') },
+        ]
+      },
+      {
+        name: "Items", icon: "🎒", color: "#2E8B57",
+        traits: [
+          { name: "Shopping Bag",  img: ipfs('QmQ3Y4Nvve9CWduMForbXDGEPKrNEG5i9QLL1AZYgyD5c4') },
+          { name: "Magic Wand",    img: ipfs('QmZA8uCQPWQQBEubZNr7XkPFZ7LjZd2b4vyjMtx9HFbRQ7') },
+          { name: "Fork",          img: ipfs('QmdsfduWA6TSmm3LZ5wYCEneNBvsQSeoPPVn9XP5Xtz8UN') },
+          { name: "Umbrella",      img: ipfs('QmUVY8wTUCvonqmjcAwqbJ3Hrd7W3ng3WiMZjvSxnTi6RN') },
+          { name: "Crystal Ball",  img: ipfs('QmWpTNMdLdgwToZW31C1KSXqtZhsyeHKHNyQJcp9U66ycr') },
+          { name: "Magnifier",     img: ipfs('QmNxfPy6jHAg9YyUTiS7eFf8wbKZpKxr9FDe57uBezR62v') },
+          { name: "Balloon",       img: ipfs('QmSn3VSyVrBX54AuXobJn6p92NdyQHfkJhk7nG2omnKCTc') },
+          { name: "Pistol",        img: ipfs('QmTatimHUEF2PhtWgD5LD5pYQgETzeeW5ooMHmS2v2CgeC') },
+          { name: "Mug",           img: ipfs('QmcjWDdpij189YfhyynbhRBysZt3fZry43Xob67TWWNmwP') },
+          { name: "Phone",         img: ipfs('QmTvw6KNDvwbdHfau4Ju6HPDYyirwct6K2naEfv5Zbfaz8') },
+          { name: "Shovel",        img: ipfs('QmRW4Z3KoxmHdwrDWHz2zTqzo9XLVx4UvnrZkXH5Rbpk7f') },
+        ]
+      },
+      {
+        name: "Skin", icon: "✨", color: "#E05A1A",
+        traits: [
+          { name: "Parrot", img: ipfs('QmTvw6KNDvwbdHfau4Ju6HPDYyirwct6K2naEfv5Zbfaz8') },
+          { name: "Spider", img: ipfs('Qmb2TvijFbrZKrJqYN5xWpbBFTeW3EvRsVteNWbGrX9Reu') },
+          { name: "Egg",    img: ipfs('QmX4VknsW5uNPztj9bUp3R69qWRRXATtCiqp95Es3Hiudn') },
+          { name: "Retro",  img: ipfs('QmUGqjh3DJbSW92Xu6uE4Nh2jmwdCpTgSQ9ai1NcPM7uVG') },
+          { name: "Violet", img: ipfs('QmXeGQu6hp9j2My7xKEhhahUJjnb63PR1pRbg9QHxoSmMK') },
+          { name: "Star",   img: ipfs('QmUCnKFQT6i6FJwWcx8QEAEFdNfGadEQwyaRM9N7pwMLXu') },
+          { name: "Red",    img: ipfs('QmVxt6fbs6aHpMhCgGfnsExUaC91yp3VzaJRy8NVk9fz5R') },
+          { name: "Aqua",   img: ipfs('QmWpTNMdLdgwToZW31C1KSXqtZhsyeHKHNyQJcp9U66ycr') },
+          { name: "Nachos", img: ipfs('Qmaid52NBxLYn4PxeCwZTVbJp7v9QFrfCyfobYS3CMQgza') },
+          { name: "Ghost",  img: ipfs('QmT2o29Knu2c9LZBtymer6PTDW8ULbPdpngnaJNsjYVVGM') },
+          { name: "Love",   img: ipfs('QmcjWDdpij189YfhyynbhRBysZt3fZry43Xob67TWWNmwP') },
+        ]
+      },
+      {
+        name: "Surroundings", icon: "🌿", color: "#7B3FA0",
+        traits: [
+          { name: "Cloud",     img: ipfs('QmX4VknsW5uNPztj9bUp3R69qWRRXATtCiqp95Es3Hiudn') },
+          { name: "Car",       img: ipfs('QmRiH4fmNa7RnsJcGY2xBcR1QVBNisXDWjDHBKCoPUxtbE') },
+          { name: "Meteorite", img: ipfs('Qmao8y9RGe42tDmGdRUDLBymrAsUKzr9kaHU4pw9FfhQAn') },
+          { name: "Mushroom",  img: ipfs('QmUGqjh3DJbSW92Xu6uE4Nh2jmwdCpTgSQ9ai1NcPM7uVG') },
+          { name: "Snake",     img: ipfs('QmTvw6KNDvwbdHfau4Ju6HPDYyirwct6K2naEfv5Zbfaz8') },
+          { name: "Money",     img: ipfs('QmV5Vs8M8VxWtHY8Uzkzi5WFVxLrWTzbvw5hRTM9n5N8jp') },
+          { name: "Sun",       img: ipfs('QmXeGQu6hp9j2My7xKEhhahUJjnb63PR1pRbg9QHxoSmMK') },
+          { name: "House",     img: ipfs('QmQjh9iua29DrnDy3kz66jdvW85zxSSMvDVWwo6mGowwU3') },
+          { name: "Moon",      img: ipfs('QmNxfPy6jHAg9YyUTiS7eFf8wbKZpKxr9FDe57uBezR62v') },
+          { name: "Cactus",    img: ipfs('QmVxt6fbs6aHpMhCgGfnsExUaC91yp3VzaJRy8NVk9fz5R') },
+          { name: "Tree",      img: ipfs('QmNfXQtS97VV6uCrBprbpayXZv9w2338JXLQ2cLz1CyF5a') },
+          { name: "Planet",    img: ipfs('QmcjWDdpij189YfhyynbhRBysZt3fZry43Xob67TWWNmwP') },
+          { name: "Big UFO",   img: ipfs('Qmaid52NBxLYn4PxeCwZTVbJp7v9QFrfCyfobYS3CMQgza') },
+          { name: "Rain",      img: ipfs('QmWpTNMdLdgwToZW31C1KSXqtZhsyeHKHNyQJcp9U66ycr') },
+        ]
+      }
+    ];
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+    function initials(name) {
+      return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    }
+    function lighten(hex, amt = 40) {
+      const n = parseInt(hex.replace('#',''), 16);
+      const r = Math.min(255, (n >> 16) + amt);
+      const g = Math.min(255, ((n >> 8) & 0xff) + amt);
+      const b = Math.min(255, (n & 0xff) + amt);
+      return '#' + ((r<<16)|(g<<8)|b).toString(16).padStart(6,'0');
+    }
+
+    // ── Render ────────────────────────────────────────────────────────────────
+    const container = document.getElementById('categories-container');
+
+    CATEGORIES.forEach(cat => {
+      const block = document.createElement('div');
+      block.className = 'category-block';
+
+      const toggle = document.createElement('button');
+      toggle.className = 'category-toggle';
+      toggle.innerHTML = `
+        <span class="cat-left">
+          <span class="cat-icon">${cat.icon}</span>
+          <span>${cat.name}</span>
+          <span class="cat-count">${cat.traits.length} traits</span>
+        </span>
+        <span class="arrow">▼</span>`;
+
+      const panel = document.createElement('div');
+      panel.className = 'trait-panel';
+
+      const grid = document.createElement('div');
+      grid.className = 'trait-grid';
+
+      cat.traits.forEach(trait => {
+        const card = document.createElement('div');
+        card.className = 'trait-card' + (cat.oneOfOne ? ' one-of-one' : '');
+
+        const imgBox = document.createElement('div');
+        imgBox.className = 'trait-img';
+        imgBox.style.background = `linear-gradient(135deg, ${cat.color}, ${lighten(cat.color, 40)})`;
+
+        // Always show initials as fallback behind the image
+        const init = document.createElement('span');
+        init.className = 'initials';
+        init.textContent = initials(trait.name);
+
+        if (trait.img) {
+          const img = document.createElement('img');
+          img.alt = trait.name;
+          img.loading = 'lazy';
+          img.src = trait.img;
+          img.addEventListener('load', () => img.classList.add('loaded'));
+          imgBox.appendChild(img);
+        }
+        imgBox.appendChild(init);
+
+        const label = document.createElement('div');
+        label.className = 'trait-name';
+        label.textContent = trait.name;
+
+        card.appendChild(imgBox);
+        card.appendChild(label);
+        grid.appendChild(card);
+      });
+
+      panel.appendChild(grid);
+      block.appendChild(toggle);
+      block.appendChild(panel);
+      container.appendChild(block);
+
+      toggle.addEventListener('click', () => {
+        const open = panel.classList.contains('open');
+        toggle.classList.toggle('open', !open);
+        panel.classList.toggle('open', !open);
+      });
+    });
+  </script>
 
 </body>
 </html>
