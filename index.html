@@ -9,53 +9,90 @@
     *, *::before, *::after { box-sizing: border-box; }
 
     body {
-      margin: 0;
-      padding: 40px 20px 80px;
+      margin: 0; padding: 0;
       background: #8BF5C5;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      display: flex; flex-direction: column; align-items: center;
       font-family: 'Pacifico', cursive;
-      text-align: center;
-      color: #000;
+      text-align: center; color: #000;
       overflow-x: hidden;
     }
 
-    .fade-in { opacity: 0; animation: fadeIn 1s ease-in forwards; }
-    .fade-in:nth-child(1) { animation-delay: 0.2s; }
-    .fade-in:nth-child(2) { animation-delay: 0.4s; }
-    .fade-in:nth-child(3) { animation-delay: 0.6s; }
-    .fade-in:nth-child(4) { animation-delay: 0.8s; }
-    .fade-in:nth-child(5) { animation-delay: 1.0s; }
-    .fade-in:nth-child(6) { animation-delay: 1.2s; }
-    @keyframes fadeIn { to { opacity: 1; } }
+    /* ── Animations ── */
+    .fade-in { opacity: 0; animation: fadeIn 0.8s ease-out forwards; }
+    .fade-in:nth-child(1) { animation-delay: 0.1s; }
+    .fade-in:nth-child(2) { animation-delay: 0.25s; }
+    .fade-in:nth-child(3) { animation-delay: 0.4s; }
+    .fade-in:nth-child(4) { animation-delay: 0.55s; }
+    .fade-in:nth-child(5) { animation-delay: 0.7s; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
-    img.hero { width: 350px; max-width: 80%; margin-bottom: 10px; }
-    h1 { font-size: 60px; margin: 10px 0 30px; }
-
-    .cta { margin-bottom: 30px; }
-    .play-button {
-      display: inline-block; background: #000; color: #8BF5C5;
-      font-size: 22px; font-weight: bold; padding: 16px 32px;
-      border-radius: 10px; text-decoration: none;
-      transition: transform 0.2s, box-shadow 0.3s;
+    /* ── HERO ── */
+    .hero {
+      width: 100%; padding: 60px 24px 40px;
+      display: flex; flex-direction: column; align-items: center; gap: 0;
     }
-    .play-button:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0,0,0,0.4); }
-
-    .links a {
-      display: block; margin: 8px 0; padding: 12px 24px;
-      text-decoration: none; background: #000; color: #8BF5C5;
-      border-radius: 8px; font-size: 18px;
-      transition: background 0.3s, color 0.3s, box-shadow 0.3s;
-      width: 80%; max-width: 300px;
+    .hero-img { width: 300px; max-width: 75%; }
+    .hero h1 { font-size: clamp(48px, 12vw, 72px); margin: 16px 0 6px; line-height: 1; }
+    .hero .tagline {
+      font-family: Arial, sans-serif; font-size: 14px;
+      letter-spacing: 2px; text-transform: uppercase;
+      opacity: 0.5; margin: 0 0 36px;
     }
-    .links a:hover { background: #333; color: #fff; box-shadow: 0 0 15px rgba(0,0,0,0.4); }
+
+    /* ── Play button ── */
+    .btn-play {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #000; color: #8BF5C5;
+      font-family: 'Pacifico', cursive; font-size: 22px;
+      padding: 18px 40px; border-radius: 14px;
+      text-decoration: none; width: 100%; max-width: 340px;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      transition: transform 0.18s, box-shadow 0.18s;
+    }
+    .btn-play:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 8px 28px rgba(0,0,0,0.3); }
+
+    /* ── Action groups ── */
+    .action-section {
+      width: 100%; max-width: 340px;
+      margin-top: 20px; padding: 0 24px;
+    }
+    .action-label {
+      font-family: Arial, sans-serif; font-size: 10px;
+      font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
+      opacity: 0.4; margin-bottom: 10px;
+    }
+    .btn-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    }
+    .btn-secondary {
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      background: #000; color: #8BF5C5;
+      font-family: 'Pacifico', cursive; font-size: 14px;
+      padding: 13px 10px; border-radius: 10px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .btn-secondary:hover { background: #222; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.25); }
+    .btn-secondary .btn-icon { font-size: 16px; }
+
+    /* ── Divider before traits ── */
+    .section-divider {
+      width: 100%; margin: 56px 0 0;
+      display: flex; flex-direction: column; align-items: center; gap: 0;
+    }
+    .section-divider svg { width: 100%; height: 48px; display: block; }
 
     /* ── Trait Library ── */
-    .trait-library { width: 100%; max-width: 900px; margin-top: 60px; }
-    .trait-library h2 { font-size: 42px; margin: 0 0 8px; }
+    .trait-library {
+      width: 100%; background: rgba(0,0,0,0.06);
+      padding: 48px 20px 80px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .trait-library-inner { width: 100%; max-width: 860px; }
+    .trait-library h2 { font-size: clamp(32px, 8vw, 48px); margin: 0 0 6px; }
     .trait-library .subtitle {
-      font-size: 14px; opacity: 0.6; margin: 0 0 32px;
+      font-size: 13px; opacity: 0.5; margin: 0 0 36px;
       font-family: Arial, sans-serif; letter-spacing: 0.5px;
     }
 
@@ -129,24 +166,56 @@
 </head>
 <body>
 
-  <img src="assets/header.png" alt="HyperPieces Logo" class="hero fade-in" />
-  <h1 class="fade-in">HyperPieces</h1>
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <img src="assets/header.png" alt="HyperPieces" class="hero-img fade-in" />
+    <h1 class="fade-in">HyperPieces</h1>
+    <p class="tagline fade-in">Collect · Play · Trade</p>
 
-  <div class="cta fade-in">
-    <a href="hyperdrop/index.html" class="play-button">🎮 Play HyperDrop</a>
+    <a href="hyperdrop/index.html" class="btn-play fade-in">🎮 Play HyperDrop</a>
+
+    <!-- Marketplaces -->
+    <div class="action-section fade-in">
+      <p class="action-label">Trade</p>
+      <div class="btn-row">
+        <a href="https://opensea.io/collection/hyperpieces-hyperevm" target="_blank" class="btn-secondary">
+          <span class="btn-icon">🌊</span> OpenSea
+        </a>
+        <a href="https://drip.trade/collections/hyperpieces?tab=items" target="_blank" class="btn-secondary">
+          <span class="btn-icon">💧</span> Drip.Trade
+        </a>
+      </div>
+    </div>
+
+    <!-- Community -->
+    <div class="action-section fade-in">
+      <p class="action-label">Community</p>
+      <div class="btn-row">
+        <a href="https://x.com/HyperPiecesCTO" target="_blank" class="btn-secondary">
+          <span class="btn-icon">𝕏</span> Twitter
+        </a>
+        <a href="https://discord.gg/9nyuGTdqmz" target="_blank" class="btn-secondary">
+          <span class="btn-icon">💬</span> Discord
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── WAVE DIVIDER ── -->
+  <div class="section-divider">
+    <svg viewBox="0 0 1440 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,24 C360,48 1080,0 1440,24 L1440,48 L0,48 Z" fill="rgba(0,0,0,0.06)"/>
+    </svg>
   </div>
 
-  <div class="links fade-in">
-    <a href="https://x.com/HyperPiecesCTO" target="_blank">Follow Twitter</a>
-    <a href="https://discord.gg/9nyuGTdqmz" target="_blank">Join Discord</a>
-    <a href="https://drip.trade/collections/hyperpieces?tab=items" target="_blank">Trade on Drip.Trade</a>
-  </div>
-
-  <div class="trait-library fade-in">
-    <h2>Trait Library</h2>
-    <p class="subtitle">7 categories &nbsp;·&nbsp; 87 traits &nbsp;·&nbsp; 15 one-of-ones</p>
-    <div id="categories-container"></div>
-  </div>
+  <!-- ── TRAIT LIBRARY ── -->
+  <section class="trait-library">
+    <div class="trait-library-inner">
+      <h2>Trait Library</h2>
+      <p class="subtitle">7 categories &nbsp;·&nbsp; 87 traits &nbsp;·&nbsp; 15 one-of-ones</p>
+      <div id="categories-container"></div>
+    </div>
+  </section>
 
   <script>
     // IPFS image helper — routes through weserv CDN for fast loading
