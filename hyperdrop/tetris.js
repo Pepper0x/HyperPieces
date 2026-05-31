@@ -52,7 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
         currentX: 0, currentY: 0, blockSize: 20,
         interval: null, isPaused: false, isGameOver: false, gameStarted: false,
         currentPlayerName: '',
-        pieceBag: []
+        pieceBag: [],
+        startTime: null
     };
 
     // --- DOM Elements ---
@@ -92,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const SB_URL = 'https://xdacfbkdbkhptipfikgr.supabase.co';
     const SB_KEY = 'sb_publishable_xdNZ6VEysJhGeTNgwh3AHQ_ebAgi7Jw';
 
-    async function submitScoreToCloud(name, score) {
+    async function submitScoreToCloud(name, score, durationMs) {
         try {
             await fetch(`${SB_URL}/rest/v1/scores`, {
                 method: 'POST',
@@ -102,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Content-Type': 'application/json',
                     'Prefer': 'return=minimal'
                 },
-                body: JSON.stringify({ name: name || 'Anonymous', score })
+                body: JSON.stringify({ name: name || 'Anonymous', score, duration_ms: durationMs })
             });
         } catch (e) {
             console.warn('Could not submit score to cloud:', e);
@@ -393,15 +394,24 @@ document.addEventListener('DOMContentLoaded', () => {
         game.gameStarted = false;
         if (game.interval) { clearInterval(game.interval); game.interval = null; }
 
-        const finalScore = game.score;
-        const playerName = game.currentPlayerName || 'Anonymous';
+        const finalScore  = game.score;
+        const playerName  = game.currentPlayerName || 'Anonymous';
+        const durationMs  = game.startTime ? Date.now() - game.startTime : 0;
+        const survivedMin = durationMs >= 30000;
 
         // Keep local backup
         addNewHighScore({ name: playerName, score: finalScore });
 
         if (elements.leaderboardTitle) elements.leaderboardTitle.textContent = 'Game Over!';
         if (elements.leaderboardMessage) {
-            elements.leaderboardMessage.textContent = `Your score: ${finalScore.toLocaleString()}`;
+            if (survivedMin) {
+                elements.leaderboardMessage.textContent = `✓ Score posted! (${finalScore.toLocaleString()} pts)`;
+                elements.leaderboardMessage.style.color = '#00f000';
+            } else {
+                const secsLeft = Math.ceil((30000 - durationMs) / 1000);
+                elements.leaderboardMessage.textContent = `Survive ${secsLeft}s longer to hit the leaderboard!`;
+                elements.leaderboardMessage.style.color = '#fca311';
+            }
             elements.leaderboardMessage.classList.remove('hidden');
         }
         if (elements.leaderboardActionButtons) elements.leaderboardActionButtons.classList.remove('hidden');
@@ -411,9 +421,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         showScreen(elements.leaderboardScreen);
 
-        // Submit score then refresh the list
-        await submitScoreToCloud(playerName, finalScore);
-        displayHighScores(finalScore);
+        // Only submit if they survived 30 seconds
+        if (survivedMin) {
+            await submitScoreToCloud(playerName, finalScore, durationMs);
+        }
+        displayHighScores(survivedMin ? finalScore : undefined);
 
         if (elements.board) {
             elements.board.removeEventListener('touchstart', handleTouchStart);
@@ -684,6 +696,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (elements.leaderboardResetScoresButton) elements.leaderboardResetScoresButton.style.display = 'none';
         if (elements.leaderboardTitle) elements.leaderboardTitle.textContent = "High Scores";
 
+        game.startTime = Date.now();
         fillAndShuffleBag();
         game.currentPiece = createPiece();
         game.nextPiece    = createPiece();
