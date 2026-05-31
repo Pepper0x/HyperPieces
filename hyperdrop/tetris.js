@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- High Score Logic ---
-    const HIGH_SCORE_KEY = 'tetrisHighScores';
+    const HIGH_SCORE_KEY = 'hyperDropHighScores';
     const MAX_HIGH_SCORES = 10;
 
     function getHighScores() {
