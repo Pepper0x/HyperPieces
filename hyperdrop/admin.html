@@ -157,17 +157,20 @@
         body: JSON.stringify({ admin_secret: pw })
       });
 
+      const text = await res.text();
+      console.log('Reset response:', res.status, text);
+
       if (res.ok) {
         status.textContent = '✓ Leaderboard cleared!';
         status.className = 'ok';
         document.getElementById('admin-pw').value = '';
         loadScores();
       } else {
-        status.textContent = 'Wrong password or server error.';
+        status.textContent = `Error ${res.status}: ${text.slice(0,120)}`;
         status.className = 'err';
       }
     } catch(e) {
-      status.textContent = 'Network error — try again.';
+      status.textContent = 'Network error: ' + e.message;
       status.className = 'err';
     }
 
