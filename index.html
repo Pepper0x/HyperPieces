@@ -108,8 +108,13 @@
     .category-toggle .arrow { font-size: 14px; transition: transform 0.3s; flex-shrink: 0; }
     .category-toggle.open .arrow { transform: rotate(180deg); }
 
-    .trait-panel { display: none; background: rgba(0,0,0,0.04); padding: 20px; }
-    .trait-panel.open { display: block; }
+    .trait-panel {
+      overflow: hidden;
+      height: 0;
+      background: rgba(0,0,0,0.04);
+      transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .trait-panel-inner { padding: 20px; }
 
     .trait-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; }
 
@@ -489,19 +494,37 @@
         grid.appendChild(card);
       });
 
-      panel.appendChild(grid);
+      const inner = document.createElement('div');
+      inner.className = 'trait-panel-inner';
+      inner.appendChild(grid);
+      panel.appendChild(inner);
       block.appendChild(toggle);
       block.appendChild(panel);
       container.appendChild(block);
 
+      function closePanel(t, p) {
+        p.style.height = p.scrollHeight + 'px';
+        requestAnimationFrame(() => { p.style.height = '0'; });
+        t.classList.remove('open');
+      }
+
+      function openPanel(t, p) {
+        p.style.height = p.scrollHeight + 'px';
+        p.addEventListener('transitionend', () => {
+          if (t.classList.contains('open')) p.style.height = 'auto';
+        }, { once: true });
+        t.classList.add('open');
+      }
+
       toggle.addEventListener('click', () => {
-        const isOpen = panel.classList.contains('open');
-        // Close all other open panels first
-        document.querySelectorAll('.category-toggle.open').forEach(t => t.classList.remove('open'));
-        document.querySelectorAll('.trait-panel.open').forEach(p => p.classList.remove('open'));
+        const isOpen = toggle.classList.contains('open');
+        // Close all others
+        document.querySelectorAll('.category-toggle.open').forEach(t => {
+          const p = t.closest('.category-block').querySelector('.trait-panel');
+          closePanel(t, p);
+        });
         // Toggle this one
-        toggle.classList.toggle('open', !isOpen);
-        panel.classList.toggle('open', !isOpen);
+        if (!isOpen) openPanel(toggle, panel);
       });
     });
   </script>
