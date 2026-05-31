@@ -160,13 +160,24 @@
       const text = await res.text();
       console.log('Reset response:', res.status, text);
 
-      if (res.ok) {
-        status.textContent = '✓ Leaderboard cleared!';
+      if (!res.ok) {
+        status.textContent = `Error ${res.status}: ${text.slice(0, 120)}`;
+        status.className = 'err';
+        btn.disabled = false;
+        return;
+      }
+
+      const count = parseInt(text, 10);
+      if (count === -1) {
+        status.textContent = '✗ Wrong password.';
+        status.className = 'err';
+      } else if (count >= 0) {
+        status.textContent = `✓ Cleared ${count} score${count !== 1 ? 's' : ''}!`;
         status.className = 'ok';
         document.getElementById('admin-pw').value = '';
         loadScores();
       } else {
-        status.textContent = `Error ${res.status}: ${text.slice(0,120)}`;
+        status.textContent = `Unexpected response: ${text}`;
         status.className = 'err';
       }
     } catch(e) {
