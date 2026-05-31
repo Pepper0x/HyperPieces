@@ -495,9 +495,13 @@
       container.appendChild(block);
 
       toggle.addEventListener('click', () => {
-        const open = panel.classList.contains('open');
-        toggle.classList.toggle('open', !open);
-        panel.classList.toggle('open', !open);
+        const isOpen = panel.classList.contains('open');
+        // Close all other open panels first
+        document.querySelectorAll('.category-toggle.open').forEach(t => t.classList.remove('open'));
+        document.querySelectorAll('.trait-panel.open').forEach(p => p.classList.remove('open'));
+        // Toggle this one
+        toggle.classList.toggle('open', !isOpen);
+        panel.classList.toggle('open', !isOpen);
       });
     });
   </script>
