@@ -207,17 +207,47 @@
     }
 
     .trait-img { cursor: zoom-in; }
+
+    /* ── Lightbox nav arrows ── */
+    .lb-arrow {
+      position: fixed;
+      top: 50%; transform: translateY(-50%);
+      background: rgba(255,255,255,0.15);
+      border: 2px solid rgba(255,255,255,0.25);
+      color: #fff; font-size: 32px;
+      width: 52px; height: 52px; border-radius: 50%;
+      cursor: pointer; z-index: 1002;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.18s, opacity 0.18s;
+      line-height: 1; padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .lb-arrow:hover { background: rgba(255,255,255,0.3); }
+    .lb-arrow.hidden { opacity: 0; pointer-events: none; }
+    #lb-prev { left: 16px; }
+    #lb-next { right: 16px; }
+
+    /* counter */
+    .lb-counter {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+      font-family: Arial, sans-serif; font-size: 13px;
+      color: rgba(255,255,255,0.5); z-index: 1002;
+      letter-spacing: 1px;
+    }
   </style>
 </head>
 <body>
 
   <!-- ── LIGHTBOX ── -->
   <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+    <button class="lb-arrow hidden" id="lb-prev" aria-label="Previous">&#8249;</button>
     <div class="lightbox-inner" id="lightbox-inner">
       <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
       <img class="lightbox-img" id="lightbox-img" src="" alt="" />
       <p class="lightbox-name" id="lightbox-name"></p>
     </div>
+    <button class="lb-arrow hidden" id="lb-next" aria-label="Next">&#8250;</button>
+    <span class="lb-counter" id="lb-counter"></span>
   </div>
 
   <!-- ── HERO ── -->
@@ -409,6 +439,31 @@
     const lbName    = document.getElementById('lightbox-name');
     const lbClose   = document.getElementById('lightbox-close');
     const lbInner   = document.getElementById('lightbox-inner');
+    const lbPrev    = document.getElementById('lb-prev');
+    const lbNext    = document.getElementById('lb-next');
+    const lbCounter = document.getElementById('lb-counter');
+
+    let lbItems = [];   // current category's traits (with images)
+    let lbIndex = 0;    // current position
+
+    function showLbItem(index) {
+      const item = lbItems[index];
+      lbImg.src = item.img.replace('w=300', 'w=800');
+      lbName.textContent = item.name;
+      lbIndex = index;
+      // Arrows: hide at ends
+      lbPrev.classList.toggle('hidden', index === 0);
+      lbNext.classList.toggle('hidden', index === lbItems.length - 1);
+      // Counter
+      lbCounter.textContent = `${index + 1} / ${lbItems.length}`;
+    }
+
+    function openLightbox(items, startIndex) {
+      lbItems = items;
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      showLbItem(startIndex);
+    }
 
     function closeLightbox() {
       lightbox.classList.remove('active');
@@ -418,8 +473,15 @@
 
     lightbox.addEventListener('click', closeLightbox);
     lbClose.addEventListener('click', closeLightbox);
-    lbInner.addEventListener('click', e => e.stopPropagation()); // don't close when clicking image
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+    lbInner.addEventListener('click', e => e.stopPropagation());
+    lbPrev.addEventListener('click', e => { e.stopPropagation(); if (lbIndex > 0) showLbItem(lbIndex - 1); });
+    lbNext.addEventListener('click', e => { e.stopPropagation(); if (lbIndex < lbItems.length - 1) showLbItem(lbIndex + 1); });
+    document.addEventListener('keydown', e => {
+      if (!lightbox.classList.contains('active')) return;
+      if (e.key === 'Escape')      closeLightbox();
+      if (e.key === 'ArrowLeft'  && lbIndex > 0)                    showLbItem(lbIndex - 1);
+      if (e.key === 'ArrowRight' && lbIndex < lbItems.length - 1)   showLbItem(lbIndex + 1);
+    });
 
     // ── Helpers ───────────────────────────────────────────────────────────────
     function initials(name) {
@@ -479,14 +541,12 @@
         label.className = 'trait-name';
         label.textContent = trait.name;
 
-        // Open lightbox on click
+        // Open lightbox on click — pass the whole category for arrow nav
         imgBox.addEventListener('click', () => {
-          const src = trait.img || null;
-          if (!src) return;
-          lbImg.src = src.replace('w=300', 'w=800');
-          lbName.textContent = trait.name;
-          lightbox.classList.add('active');
-          document.body.style.overflow = 'hidden';
+          if (!trait.img) return;
+          const catItems  = cat.traits.filter(t => t.img);
+          const startIdx  = catItems.findIndex(t => t.name === trait.name);
+          openLightbox(catItems, startIdx >= 0 ? startIdx : 0);
         });
 
         card.appendChild(imgBox);
