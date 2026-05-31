@@ -88,6 +88,41 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Touch State ---
     const touch = { startX: 0, startY: 0, currentX: 0, startTime: 0, isDragging: false, isSwipedDown: false, movedHorizontally: false };
 
+    // --- Supabase (Global Leaderboard) ---
+    const SB_URL = 'https://xdacfbkdbkhptipfikgr.supabase.co';
+    const SB_KEY = 'sb_publishable_xdNZ6VEysJhGeTNgwh3AHQ_ebAgi7Jw';
+
+    async function submitScoreToCloud(name, score) {
+        try {
+            await fetch(`${SB_URL}/rest/v1/scores`, {
+                method: 'POST',
+                headers: {
+                    'apikey': SB_KEY,
+                    'Authorization': `Bearer ${SB_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({ name: name || 'Anonymous', score })
+            });
+        } catch (e) {
+            console.warn('Could not submit score to cloud:', e);
+        }
+    }
+
+    async function fetchGlobalScores() {
+        try {
+            const res = await fetch(
+                `${SB_URL}/rest/v1/scores?select=name,score&order=score.desc&limit=10`,
+                { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
+            );
+            if (!res.ok) throw new Error('fetch failed');
+            return await res.json();
+        } catch (e) {
+            console.warn('Could not fetch global scores:', e);
+            return null;
+        }
+    }
+
     // --- High Score Logic ---
     const HIGH_SCORE_KEY = 'tetrisHighScores';
     const MAX_HIGH_SCORES = 10;
@@ -115,14 +150,29 @@ document.addEventListener('DOMContentLoaded', () => {
         saveHighScores(scores);
     }
 
-    function displayHighScores() {
+    async function displayHighScores(currentScore) {
         if (!elements.highScoreList) return;
-        const scores = getHighScores();
-        elements.highScoreList.innerHTML = scores.length === 0
-            ? '<li>No high scores yet!</li>'
-            : scores.map((e, i) =>
-                `<li>#${i + 1}: ${e.name || 'Anonymous'} - ${typeof e.score === 'number' ? e.score : '?'}</li>`
-              ).join('');
+        elements.highScoreList.innerHTML = '<li class="loading-scores">Loading...</li>';
+
+        const scores = await fetchGlobalScores();
+
+        if (!scores || scores.length === 0) {
+            elements.highScoreList.innerHTML = '<li>No scores yet — be the first!</li>';
+            return;
+        }
+
+        const medals = ['🥇','🥈','🥉'];
+        elements.highScoreList.innerHTML = scores.map((e, i) => {
+            const rank   = medals[i] || `#${i + 1}`;
+            const name   = (e.name || 'Anonymous').slice(0, 15);
+            const pts    = Number(e.score).toLocaleString();
+            const isYou  = currentScore !== undefined && e.score === currentScore;
+            return `<li class="score-entry${isYou ? ' you' : ''}">
+                        <span class="rank">${rank}</span>
+                        <span class="sname">${name}${isYou ? ' 👈' : ''}</span>
+                        <span class="spts">${pts}</span>
+                    </li>`;
+        }).join('');
     }
 
     // --- Screen Management ---
@@ -338,22 +388,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function endGame() {
+    async function endGame() {
         game.isGameOver = true;
         game.gameStarted = false;
         if (game.interval) { clearInterval(game.interval); game.interval = null; }
 
-        addNewHighScore({ name: game.currentPlayerName || "Anonymous", score: game.score });
-        displayHighScores();
+        const finalScore = game.score;
+        const playerName = game.currentPlayerName || 'Anonymous';
 
-        if (elements.leaderboardTitle) elements.leaderboardTitle.textContent = "Game Over!";
-        if (elements.leaderboardMessage) elements.leaderboardMessage.classList.remove('hidden');
+        // Keep local backup
+        addNewHighScore({ name: playerName, score: finalScore });
+
+        if (elements.leaderboardTitle) elements.leaderboardTitle.textContent = 'Game Over!';
+        if (elements.leaderboardMessage) {
+            elements.leaderboardMessage.textContent = `Your score: ${finalScore.toLocaleString()}`;
+            elements.leaderboardMessage.classList.remove('hidden');
+        }
         if (elements.leaderboardActionButtons) elements.leaderboardActionButtons.classList.remove('hidden');
         if (elements.leaderboardTryAgainButton) elements.leaderboardTryAgainButton.style.display = 'inline-block';
         if (elements.leaderboardResetScoresButton) elements.leaderboardResetScoresButton.style.display = 'none';
         if (elements.leaderboardMainMenuButton) elements.leaderboardMainMenuButton.style.display = 'inline-block';
 
         showScreen(elements.leaderboardScreen);
+
+        // Submit score then refresh the list
+        await submitScoreToCloud(playerName, finalScore);
+        displayHighScores(finalScore);
 
         if (elements.board) {
             elements.board.removeEventListener('touchstart', handleTouchStart);
@@ -576,11 +636,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (elements.viewLeaderboardButton) {
             elements.viewLeaderboardButton.addEventListener('click', () => {
-                if (elements.leaderboardTitle) elements.leaderboardTitle.textContent = "High Scores";
+                if (elements.leaderboardTitle) elements.leaderboardTitle.textContent = "Global Leaderboard";
                 if (elements.leaderboardMessage) elements.leaderboardMessage.classList.add('hidden');
                 if (elements.leaderboardActionButtons) elements.leaderboardActionButtons.classList.remove('hidden');
                 if (elements.leaderboardTryAgainButton) elements.leaderboardTryAgainButton.style.display = 'none';
-                if (elements.leaderboardResetScoresButton) elements.leaderboardResetScoresButton.style.display = 'inline-block';
+                if (elements.leaderboardResetScoresButton) elements.leaderboardResetScoresButton.style.display = 'none';
                 if (elements.leaderboardMainMenuButton) elements.leaderboardMainMenuButton.style.display = 'inline-block';
                 displayHighScores();
                 showScreen(elements.leaderboardScreen);

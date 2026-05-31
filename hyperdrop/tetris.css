@@ -129,26 +129,45 @@ body {
 
 /* Leaderboard Specifics */
 #high-score-list {
-  list-style: none; /* Remove default bullets */
+  list-style: none;
   padding: 0;
-  margin: 0 auto 20px auto; /* Center list */
-  max-height: 200px; /* Adjusted max height slightly */
+  margin: 0 auto 20px auto;
+  max-height: 260px;
   overflow-y: auto;
-  max-width: 300px;
-  text-align: left; /* Align text left within list */
+  width: 100%;
+  max-width: 320px;
   border: 1px solid var(--grid-color);
-  padding: 10px;
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 5px;
+  background-color: rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
+/* Each row */
 #high-score-list li {
-  padding: 5px 0;
-  font-size: 0.85rem;
-  border-bottom: 1px dashed var(--grid-color);
+  padding: 0;
+  border-bottom: 1px solid rgba(23, 130, 212, 0.25);
 }
-#high-score-list li:last-child {
-  border-bottom: none;
+#high-score-list li:last-child { border-bottom: none; }
+
+/* Structured score row */
+.score-entry {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  font-size: 0.8rem;
+}
+.score-entry.you {
+  background: rgba(252, 163, 17, 0.12);
+}
+.score-entry .rank  { font-size: 1rem; min-width: 2em; text-align: center; }
+.score-entry .sname { flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.score-entry .spts  { color: var(--highlight-color); font-weight: bold; white-space: nowrap; }
+
+/* Loading state */
+.loading-scores {
+  padding: 14px; text-align: center;
+  opacity: 0.5; font-size: 0.8rem;
 }
 
 /* Button Styling */

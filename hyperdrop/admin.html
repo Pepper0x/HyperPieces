@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HyperDrop Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: #0d0d1a;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Press Start 2P', cursive;
+      color: #e0e1dd;
+      padding: 20px;
+    }
+    .card {
+      background: #1a1a2e;
+      border: 2px solid #fca311;
+      border-radius: 12px;
+      padding: 40px 32px;
+      width: 100%; max-width: 420px;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(252,163,17,0.2);
+    }
+    h1 { font-size: 1.1rem; color: #fca311; margin-bottom: 8px; }
+    .sub { font-size: 0.65rem; opacity: 0.5; margin-bottom: 32px; line-height: 1.8; }
+
+    label { display: block; font-size: 0.65rem; margin-bottom: 8px; opacity: 0.7; text-align: left; }
+    input[type="password"] {
+      width: 100%; padding: 12px 14px;
+      background: #0d0d1a; border: 1px solid #147df5;
+      color: #fff; border-radius: 6px;
+      font-family: 'Press Start 2P', cursive; font-size: 0.75rem;
+      margin-bottom: 20px;
+    }
+    input[type="password"]:focus { outline: none; border-color: #fca311; }
+
+    .btn {
+      width: 100%; padding: 14px;
+      background: #dc3545; border: none; border-radius: 6px;
+      color: #fff; font-family: 'Press Start 2P', cursive;
+      font-size: 0.75rem; cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn:hover { background: #b02a37; }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { background: #444; cursor: default; }
+
+    #status {
+      margin-top: 20px; font-size: 0.65rem; line-height: 1.8;
+      min-height: 1.5em;
+    }
+    #status.ok  { color: #00f000; }
+    #status.err { color: #dc3545; }
+
+    .divider { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 28px 0; }
+
+    .scores-section h2 { font-size: 0.8rem; color: #fca311; margin-bottom: 16px; }
+    #live-list {
+      list-style: none; text-align: left;
+      background: rgba(0,0,0,0.3); border-radius: 6px;
+      padding: 10px; max-height: 240px; overflow-y: auto;
+      border: 1px solid rgba(23,130,212,0.3);
+    }
+    #live-list li {
+      display: flex; gap: 8px; padding: 6px 4px;
+      font-size: 0.6rem; border-bottom: 1px dashed rgba(255,255,255,0.1);
+      align-items: center;
+    }
+    #live-list li:last-child { border-bottom: none; }
+    #live-list .lb-rank { min-width: 2em; text-align: center; }
+    #live-list .lb-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #live-list .lb-score { color: #fca311; font-weight: bold; }
+    .refresh-btn {
+      width: 100%; padding: 10px; margin-top: 10px;
+      background: #147df5; border: none; border-radius: 6px;
+      color: #fff; font-family: 'Press Start 2P', cursive;
+      font-size: 0.65rem; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .refresh-btn:hover { background: #0a6dd9; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>⚙ HyperDrop Admin</h1>
+  <p class="sub">Weekly leaderboard reset panel</p>
+
+  <!-- Live scores -->
+  <div class="scores-section">
+    <h2>Current Leaderboard</h2>
+    <ul id="live-list"><li>—</li></ul>
+    <button class="refresh-btn" id="refresh-btn">↻ Refresh</button>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- Reset -->
+  <label for="admin-pw">Admin Password</label>
+  <input type="password" id="admin-pw" placeholder="Enter password" autocomplete="off" />
+  <button class="btn" id="reset-btn">🗑 Reset Leaderboard</button>
+  <p id="status"></p>
+</div>
+
+<script>
+  const SB_URL = 'https://xdacfbkdbkhptipfikgr.supabase.co';
+  const SB_KEY = 'sb_publishable_xdNZ6VEysJhGeTNgwh3AHQ_ebAgi7Jw';
+
+  async function loadScores() {
+    const list = document.getElementById('live-list');
+    list.innerHTML = '<li>Loading...</li>';
+    try {
+      const res = await fetch(
+        `${SB_URL}/rest/v1/scores?select=name,score&order=score.desc&limit=20`,
+        { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
+      );
+      const scores = await res.json();
+      if (!scores.length) { list.innerHTML = '<li>No scores yet.</li>'; return; }
+      const medals = ['🥇','🥈','🥉'];
+      list.innerHTML = scores.map((s, i) =>
+        `<li>
+          <span class="lb-rank">${medals[i] || '#'+(i+1)}</span>
+          <span class="lb-name">${s.name || 'Anonymous'}</span>
+          <span class="lb-score">${Number(s.score).toLocaleString()}</span>
+        </li>`
+      ).join('');
+    } catch(e) {
+      list.innerHTML = '<li>Could not load scores.</li>';
+    }
+  }
+
+  document.getElementById('refresh-btn').addEventListener('click', loadScores);
+
+  document.getElementById('reset-btn').addEventListener('click', async () => {
+    const pw = document.getElementById('admin-pw').value.trim();
+    const status = document.getElementById('status');
+    const btn = document.getElementById('reset-btn');
+
+    if (!pw) { status.textContent = 'Enter the password first.'; status.className = 'err'; return; }
+
+    if (!confirm('This will delete ALL scores. Are you sure?')) return;
+
+    btn.disabled = true;
+    status.textContent = 'Resetting...';
+    status.className = '';
+
+    try {
+      const res = await fetch(`${SB_URL}/rest/v1/rpc/reset_leaderboard`, {
+        method: 'POST',
+        headers: {
+          'apikey': SB_KEY,
+          'Authorization': `Bearer ${SB_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ admin_secret: pw })
+      });
+
+      if (res.ok) {
+        status.textContent = '✓ Leaderboard cleared!';
+        status.className = 'ok';
+        document.getElementById('admin-pw').value = '';
+        loadScores();
+      } else {
+        status.textContent = 'Wrong password or server error.';
+        status.className = 'err';
+      }
+    } catch(e) {
+      status.textContent = 'Network error — try again.';
+      status.className = 'err';
+    }
+
+    btn.disabled = false;
+  });
+
+  // Load on open
+  loadScores();
+</script>
+</body>
+</html>
