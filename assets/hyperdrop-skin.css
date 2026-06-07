@@ -1,0 +1,45 @@
+/* HyperDrop synthwave skin — re-skins its menus to match the rest of the arcade.
+   Link AFTER tetris.css. HyperDrop uses its own CSS variable names, so we map
+   those to the cyan/magenta palette. */
+:root {
+  --board-bg: #190a30;                       /* panels & overlays */
+  --grid-color: rgba(0, 240, 255, 0.30);     /* borders / grid lines */
+  --panel-bg: rgba(25, 10, 48, 0.85);
+  --highlight-color: #00f0ff;                /* titles, glow, focus -> cyan */
+  --text-color: #e6f5ee;
+  --btn-color: #00f0ff;
+  --btn-hover-color: #6ff7ff;
+  --btn-secondary-color: #2a1850;
+  --btn-secondary-hover-color: #3a2470;
+  --btn-danger-color: #ff2bd6;
+  --btn-danger-hover-color: #ff5ce0;
+}
+
+body { background: linear-gradient(180deg, #1a0535 0%, #0a0014 100%) !important; }
+
+/* Start-screen title styled like the other games' logos */
+#start-screen h1 {
+  font-family: 'Pacifico', cursive !important;
+  font-size: 2.6rem !important;
+  text-shadow: 0 0 8px #00f0ff, 0 0 18px #00f0ff, 3px 3px 0 #ff2bd6 !important;
+}
+.screen h1, .screen h2 { text-shadow: 0 0 8px rgba(0,240,255,0.6); }
+
+/* Panel glow */
+.screen-content { box-shadow: 0 0 30px rgba(0,240,255,0.3) !important; }
+
+/* Name input -> dark with magenta border (matches HyperFlap/HyperLong) */
+.name-entry input[type="text"] {
+  background: #0a0014 !important;
+  color: #fff !important;
+  border: 2px solid #ff2bd6 !important;
+}
+.name-entry input[type="text"]::placeholder { color: #7a6ba8 !important; }
+
+/* Buttons: cyan primary (dark text), themed secondary/danger (light text) */
+.btn { color: #00121a !important; }
+.btn.btn-secondary, .btn.btn-danger { color: #fff !important; }
+
+/* Leaderboard rows */
+.score-entry .spts { color: #00f0ff !important; }
+.score-entry.you { background: rgba(255, 230, 0, 0.12) !important; }

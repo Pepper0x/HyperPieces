@@ -460,12 +460,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const cw = boardCanvas.width;
         const ch = boardCanvas.height;
 
-        // Board background
-        boardCtx.fillStyle = '#3a00ac';
+        // Board background (synthwave dark purple to match the arcade)
+        const bgGrad = boardCtx.createLinearGradient(0, 0, 0, ch);
+        bgGrad.addColorStop(0, '#1a0535'); bgGrad.addColorStop(1, '#10001f');
+        boardCtx.fillStyle = bgGrad;
         boardCtx.fillRect(0, 0, cw, ch);
 
         // Grid lines — single path, one stroke call (much cheaper than 200 individual rects)
-        boardCtx.strokeStyle = 'rgba(23, 130, 212, 0.4)';
+        boardCtx.strokeStyle = 'rgba(0, 240, 255, 0.16)';
         boardCtx.lineWidth = 1;
         boardCtx.beginPath();
         for (let y = 0; y <= H; y++) {
