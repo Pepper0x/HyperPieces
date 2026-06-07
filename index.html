@@ -319,10 +319,12 @@
   </section>
 
   <script>
-    // IPFS image helper — routes through weserv CDN for fast loading
+    // Local trait images — downloaded from IPFS, served from our own domain (fast + reliable).
+    // Each file is named by its CID (or token-ID for 1/1s); see assets/traits/.
     const BASE = 'bafybeibgbwnr6ce3krsdybyid6wulhflbyoa4hvj22cttnhnefdfctnkca';
     function ipfs(cid) {
-      return 'https://images.weserv.nl/?url=https%3A%2F%2Fipfs.io%2Fipfs%2F' + cid + '&w=300&q=85&output=webp';
+      const seg = cid.split('/').pop().replace(/\.jpeg$/, '');
+      return 'assets/traits/' + seg + '.jpg';
     }
 
     // ── Trait data — every image is a unique NFT, no repeats across categories ─
@@ -466,7 +468,7 @@
 
     function showLbItem(index) {
       const item = lbItems[index];
-      lbImg.src = item.img.replace('w=300', 'w=800');
+      lbImg.src = item.img;
       lbName.textContent = item.name;
       lbIndex = index;
       // Arrows: hide at ends
