@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>HyperArcade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@600;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cyan: #00f0ff;
+      --magenta: #ff2bd6;
+      --yellow: #ffe600;
+      --purple: #7b2ff7;
+      --bg0: #0a0014;
+      --bg1: #1a0535;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Press Start 2P', cursive;
+      color: #fff;
+      background: var(--bg0);
+      overflow: hidden;
+      position: relative;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: pan-y;
+    }
+
+    /* ── Retro background: sky gradient + neon sun + grid floor ── */
+    .scene {
+      position: fixed; inset: 0; z-index: 0; overflow: hidden;
+      background: linear-gradient(180deg, #1a0535 0%, #3d0a52 38%, #5e1170 50%, #0a0014 50%, #0a0014 100%);
+    }
+    .sun {
+      position: absolute; left: 50%; top: 23%;
+      width: 300px; height: 300px; transform: translate(-50%,-50%);
+      border-radius: 50%;
+      background: linear-gradient(180deg, #ffe600 0%, #ff8a00 45%, #ff2bd6 100%);
+      box-shadow: 0 0 80px rgba(255,80,200,0.5);
+    }
+    /* sun horizontal slats */
+    .sun::after {
+      content: ""; position: absolute; inset: 0; border-radius: 50%;
+      background: repeating-linear-gradient(180deg, transparent 0 14px, var(--bg1) 14px 20px);
+      -webkit-mask: linear-gradient(180deg, transparent 52%, #000 52%);
+              mask: linear-gradient(180deg, transparent 52%, #000 52%);
+    }
+    /* grid floor */
+    .grid {
+      position: absolute; left: 50%; bottom: 0;
+      width: 250%; height: 50%; transform: translateX(-50%) perspective(340px) rotateX(68deg);
+      transform-origin: bottom center;
+      background-image:
+        linear-gradient(90deg, rgba(0,240,255,0.5) 1px, transparent 1px),
+        linear-gradient(0deg,  rgba(255,43,214,0.5) 1px, transparent 1px);
+      background-size: 60px 44px;
+      animation: grid-move 1.2s linear infinite;
+    }
+    @keyframes grid-move { from { background-position-y: 0; } to { background-position-y: 44px; } }
+
+    /* scanline overlay */
+    .scanlines {
+      position: fixed; inset: 0; z-index: 50; pointer-events: none;
+      background: repeating-linear-gradient(180deg, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.18) 2px 4px);
+      mix-blend-mode: multiply;
+    }
+
+    /* ── Layout ── */
+    .wrap {
+      position: relative; z-index: 10;
+      height: 100%;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 22px 16px 16px;
+    }
+
+    .title {
+      font-size: clamp(20px, 6vw, 40px);
+      letter-spacing: 2px;
+      text-align: center;
+      color: #fff;
+      text-shadow:
+        0 0 6px var(--cyan), 0 0 14px var(--cyan),
+        3px 3px 0 var(--magenta);
+      animation: flicker 4s infinite;
+    }
+    @keyframes flicker {
+      0%,18%,22%,25%,53%,57%,100% { opacity: 1; }
+      20%,24%,55% { opacity: 0.72; }
+    }
+    .subtitle {
+      font-size: 9px; letter-spacing: 3px; margin-top: 12px;
+      color: var(--yellow); text-shadow: 0 0 8px rgba(255,230,0,0.6);
+    }
+
+    /* ── Carousel ── */
+    .carousel {
+      flex: 1;
+      width: 100%; max-width: 460px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 6px;
+      min-height: 0;
+    }
+    .arrow {
+      flex-shrink: 0;
+      width: 44px; height: 44px;
+      background: transparent;
+      border: 2px solid var(--cyan);
+      color: var(--cyan);
+      border-radius: 8px;
+      font-family: 'Press Start 2P'; font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0,240,255,0.4), inset 0 0 8px rgba(0,240,255,0.15);
+      transition: transform 0.12s, box-shadow 0.2s, background 0.2s;
+    }
+    .arrow:hover { background: rgba(0,240,255,0.12); box-shadow: 0 0 18px rgba(0,240,255,0.7); }
+    .arrow:active { transform: scale(0.92); }
+
+    /* Cabinet (game card) */
+    .stage {
+      flex: 1;
+      max-width: 320px;
+      min-width: 0;
+      perspective: 900px;
+    }
+    .cabinet {
+      background: linear-gradient(180deg, #14002e 0%, #25004d 100%);
+      border: 3px solid var(--magenta);
+      border-radius: 16px;
+      padding: 16px 16px 20px;
+      box-shadow: 0 0 24px rgba(255,43,214,0.45), inset 0 0 20px rgba(123,47,247,0.25);
+      text-align: center;
+      animation: cab-in 0.35s ease;
+    }
+    @keyframes cab-in { from { opacity: 0; transform: translateY(10px) scale(0.97); } to { opacity: 1; transform: none; } }
+
+    .screen {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid var(--cyan);
+      box-shadow: 0 0 14px rgba(0,240,255,0.4), inset 0 0 30px rgba(0,0,0,0.6);
+      background: #000;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .screen img {
+      width: 100%; height: 100%; object-fit: cover;
+      image-rendering: auto;
+    }
+    .screen .scrim {
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(180deg, rgba(0,0,0,0) 0 3px, rgba(0,0,0,0.22) 3px 5px);
+      pointer-events: none;
+    }
+    .screen .badge {
+      position: absolute; top: 8px; left: 8px;
+      font-size: 7px; padding: 4px 7px; border-radius: 20px;
+      background: rgba(0,0,0,0.6); border: 1px solid var(--yellow);
+      color: var(--yellow); letter-spacing: 1px;
+    }
+
+    .game-name {
+      margin-top: 16px;
+      font-size: 18px;
+      color: #fff;
+      text-shadow: 0 0 8px var(--magenta), 2px 2px 0 var(--purple);
+    }
+    .game-tag {
+      margin-top: 10px; font-size: 8px; line-height: 1.7;
+      color: #c9b8ff; min-height: 2.6em;
+    }
+
+    .cab-buttons { margin-top: 16px; display: flex; flex-direction: column; gap: 9px; }
+    .cb {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 13px 10px; border-radius: 8px;
+      font-family: 'Press Start 2P'; font-size: 10px;
+      text-decoration: none; cursor: pointer; border: 2px solid;
+      transition: transform 0.12s, box-shadow 0.2s, background 0.2s;
+    }
+    .cb-play {
+      background: var(--cyan); color: #00121a; border-color: var(--cyan);
+      box-shadow: 0 0 14px rgba(0,240,255,0.5);
+    }
+    .cb-play:hover { background: #6ff7ff; box-shadow: 0 0 22px rgba(0,240,255,0.85); transform: translateY(-1px); }
+    .cb-lb {
+      background: transparent; color: var(--yellow); border-color: var(--yellow);
+      box-shadow: 0 0 10px rgba(255,230,0,0.3);
+    }
+    .cb-lb:hover { background: rgba(255,230,0,0.12); box-shadow: 0 0 18px rgba(255,230,0,0.6); transform: translateY(-1px); }
+
+    /* dots + counter */
+    .dots { display: flex; gap: 8px; justify-content: center; margin-top: 16px; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,0.25); cursor: pointer; transition: background 0.2s, box-shadow 0.2s; }
+    .dot.on { background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+
+    .back {
+      margin-top: 14px; font-size: 8px; letter-spacing: 2px;
+      color: #9a8cc4; text-decoration: none;
+    }
+    .back:hover { color: var(--cyan); }
+
+    /* ── Leaderboard modal ── */
+    .modal {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(5,0,15,0.86);
+      display: none; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal.open { display: flex; }
+    .modal-box {
+      width: 100%; max-width: 360px;
+      background: linear-gradient(180deg, #14002e, #25004d);
+      border: 3px solid var(--cyan);
+      border-radius: 14px;
+      padding: 22px 20px;
+      box-shadow: 0 0 30px rgba(0,240,255,0.5);
+      animation: cab-in 0.25s ease;
+    }
+    .modal-box h2 {
+      font-size: 13px; text-align: center; color: var(--cyan);
+      text-shadow: 0 0 8px var(--cyan); margin-bottom: 6px;
+    }
+    .modal-box .mg { text-align:center; font-size:8px; color: var(--yellow); margin-bottom: 16px; letter-spacing: 1px; }
+    #lb-list { list-style: none; max-height: 50vh; overflow-y: auto; }
+    #lb-list li { border-bottom: 1px solid rgba(0,240,255,0.15); }
+    #lb-list li:last-child { border: none; }
+    .lbr { display: flex; align-items: center; gap: 10px; padding: 10px 6px; font-size: 9px; }
+    .lbr .rk { min-width: 2.2em; text-align: center; font-size: 12px; }
+    .lbr .nm { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #e7dcff; }
+    .lbr .pt { color: var(--cyan); }
+    .lb-loading { text-align: center; padding: 18px; font-size: 9px; color: #9a8cc4; }
+    .modal-close {
+      margin-top: 16px; width: 100%; padding: 12px;
+      background: var(--magenta); color: #fff; border: none; border-radius: 8px;
+      font-family: 'Press Start 2P'; font-size: 10px; cursor: pointer;
+      box-shadow: 0 0 12px rgba(255,43,214,0.5);
+    }
+    .modal-close:hover { background: #ff5ce0; }
+
+    @media (max-width: 380px) {
+      .arrow { width: 38px; height: 38px; font-size: 14px; }
+      .game-name { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <div class="sun"></div>
+    <div class="grid"></div>
+  </div>
+  <div class="scanlines"></div>
+
+  <div class="wrap">
+    <h1 class="title">HYPERARCADE</h1>
+    <p class="subtitle">★ INSERT COIN ★</p>
+
+    <div class="carousel">
+      <button class="arrow" id="prev" aria-label="Previous">&#9664;</button>
+      <div class="stage">
+        <div class="cabinet" id="cabinet"><!-- filled by JS --></div>
+      </div>
+      <button class="arrow" id="next" aria-label="Next">&#9654;</button>
+    </div>
+
+    <div class="dots" id="dots"></div>
+    <a href="../index.html" class="back">‹ EXIT TO HYPERPIECES</a>
+  </div>
+
+  <!-- Leaderboard modal -->
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <h2 id="lb-title">LEADERBOARD</h2>
+      <p class="mg" id="lb-sub">TOP 10</p>
+      <ol id="lb-list"><li class="lb-loading">Loading...</li></ol>
+      <button class="modal-close" id="lb-close">CLOSE</button>
+    </div>
+  </div>
+
+  <script>
+    const SB_URL = 'https://xdacfbkdbkhptipfikgr.supabase.co';
+    const SB_KEY = 'sb_publishable_xdNZ6VEysJhGeTNgwh3AHQ_ebAgi7Jw';
+
+    // ── Game registry — add new games here as they launch ──
+    const GAMES = [
+      {
+        id: 'hyperdrop', name: 'HyperDrop', path: '../hyperdrop/index.html',
+        art: '../assets/nfts/943.jpg',
+        tag: 'Stack falling HyperPieces. Clear lines. Survive the speed-up.'
+      },
+      {
+        id: 'hyperlong', name: 'HyperLong', path: '../hyperlong/index.html',
+        art: '../assets/nfts/229.jpg',
+        tag: 'Snake reborn. Eat pieces, grow long, dodge the bombs.'
+      },
+    ];
+
+    let idx = 0;
+    const cabinet = document.getElementById('cabinet');
+    const dotsEl = document.getElementById('dots');
+
+    function render() {
+      const g = GAMES[idx];
+      cabinet.innerHTML = `
+        <div class="screen">
+          <img src="${g.art}" alt="${g.name}" onerror="this.style.display='none'">
+          <div class="scrim"></div>
+          <span class="badge">GAME ${idx+1}/${GAMES.length}</span>
+        </div>
+        <h2 class="game-name">${g.name}</h2>
+        <p class="game-tag">${g.tag}</p>
+        <div class="cab-buttons">
+          <a class="cb cb-play" href="${g.path}">▶ PLAY NOW</a>
+          <button class="cb cb-lb" data-game="${g.id}" data-name="${g.name}">🏆 LEADERBOARD</button>
+        </div>`;
+      dotsEl.innerHTML = GAMES.map((_, i) => `<span class="dot ${i===idx?'on':''}" data-i="${i}"></span>`).join('');
+      cabinet.querySelector('.cb-lb').addEventListener('click', () => openLeaderboard(g.id, g.name));
+      dotsEl.querySelectorAll('.dot').forEach(d => d.addEventListener('click', () => { idx = +d.dataset.i; render(); }));
+    }
+
+    function go(dir) { idx = (idx + dir + GAMES.length) % GAMES.length; render(); }
+    document.getElementById('prev').addEventListener('click', () => go(-1));
+    document.getElementById('next').addEventListener('click', () => go(1));
+    document.addEventListener('keydown', e => {
+      if (document.getElementById('modal').classList.contains('open')) { if (e.key==='Escape') closeModal(); return; }
+      if (e.key === 'ArrowLeft') go(-1);
+      if (e.key === 'ArrowRight') go(1);
+    });
+
+    // swipe
+    let tx = 0;
+    document.querySelector('.carousel').addEventListener('touchstart', e => tx = e.touches[0].clientX, {passive:true});
+    document.querySelector('.carousel').addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - tx;
+      if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+    }, {passive:true});
+
+    // ── Leaderboard ──
+    const modal = document.getElementById('modal');
+    function closeModal() { modal.classList.remove('open'); }
+    document.getElementById('lb-close').addEventListener('click', closeModal);
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+    async function openLeaderboard(gameId, gameName) {
+      document.getElementById('lb-title').textContent = gameName.toUpperCase();
+      const list = document.getElementById('lb-list');
+      list.innerHTML = '<li class="lb-loading">Loading...</li>';
+      modal.classList.add('open');
+      try {
+        const res = await fetch(`${SB_URL}/rest/v1/scores?select=name,score&game=eq.${gameId}&order=score.desc&limit=10`,
+          { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } });
+        const scores = await res.json();
+        if (!scores.length) { list.innerHTML = '<li class="lb-loading">No scores yet — be the first!</li>'; return; }
+        const medals = ['🥇','🥈','🥉'];
+        list.innerHTML = scores.map((s,i) =>
+          `<li class="lbr">
+             <span class="rk">${medals[i] || '#'+(i+1)}</span>
+             <span class="nm">${(s.name||'Anon').slice(0,15)}</span>
+             <span class="pt">${Number(s.score).toLocaleString()}</span>
+           </li>`).join('');
+      } catch(e) {
+        list.innerHTML = '<li class="lb-loading">Could not load scores.</li>';
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>
