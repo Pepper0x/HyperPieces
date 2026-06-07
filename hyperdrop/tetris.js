@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Content-Type': 'application/json',
                     'Prefer': 'return=minimal'
                 },
-                body: JSON.stringify({ name: name || 'Anonymous', score, duration_ms: durationMs })
+                body: JSON.stringify({ name: name || 'Anonymous', score, duration_ms: durationMs, game: 'hyperdrop' })
             });
         } catch (e) {
             console.warn('Could not submit score to cloud:', e);
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchGlobalScores() {
         try {
             const res = await fetch(
-                `${SB_URL}/rest/v1/scores?select=name,score&order=score.desc&limit=10`,
+                `${SB_URL}/rest/v1/scores?select=name,score&game=eq.hyperdrop&order=score.desc&limit=10`,
                 { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
             );
             if (!res.ok) throw new Error('fetch failed');
