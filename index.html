@@ -76,6 +76,17 @@
     .btn-secondary:hover { background: #222; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.25); }
     .btn-secondary .btn-icon { font-size: 16px; }
 
+    /* Game buttons — bigger with a mint glow to be the primary CTA */
+    .btn-game {
+      font-size: 16px; padding: 18px 10px;
+      border: 2px solid #8BF5C5;
+      box-shadow: 0 3px 16px rgba(0,0,0,0.25);
+    }
+    .btn-game:hover {
+      background: #111;
+      box-shadow: 0 6px 22px rgba(139,245,197,0.5);
+    }
+
     /* ── Divider before traits ── */
     .section-divider {
       width: 100%; margin: 56px 0 0;
@@ -255,7 +266,14 @@
     <img src="assets/header.png" alt="HyperPieces" class="hero-img fade-in" />
     <h1 class="fade-in">HyperPieces</h1>
 
-    <a href="hyperdrop/index.html" class="btn-play fade-in">🎮 Play HyperDrop</a>
+    <!-- Games -->
+    <div class="action-section fade-in">
+      <p class="action-label">HyperArcade</p>
+      <div class="btn-row">
+        <a href="hyperdrop/index.html" class="btn-secondary btn-game">🎮 HyperDrop</a>
+        <a href="hyperlong/index.html" class="btn-secondary btn-game">🐍 HyperLong</a>
+      </div>
+    </div>
 
     <!-- Marketplaces -->
     <div class="action-section fade-in">
