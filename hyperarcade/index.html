@@ -240,6 +240,73 @@
     }
     .modal-close:hover { background: #ff5ce0; }
 
+    /* ── PLAY MODE (cabinet with embedded game) ── */
+    .play-mode {
+      position: fixed; inset: 0; z-index: 80;
+      display: none; align-items: center; justify-content: center;
+      padding: 14px;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(123,47,247,0.25), transparent 60%),
+        #06010f;
+    }
+    .play-mode.open { display: flex; }
+    .cab-shell {
+      width: 100%; max-width: 480px; height: 100%;
+      display: flex; flex-direction: column; gap: 10px;
+      justify-content: center;
+    }
+    .cab-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .cab-now {
+      font-size: 9px; letter-spacing: 2px; color: var(--yellow);
+      text-shadow: 0 0 8px rgba(255,230,0,0.6);
+    }
+    .eject {
+      background: var(--magenta); color: #fff; border: none;
+      padding: 10px 14px; border-radius: 8px;
+      font-family: 'Press Start 2P'; font-size: 9px; cursor: pointer;
+      box-shadow: 0 0 12px rgba(255,43,214,0.5);
+    }
+    .eject:hover { background: #ff5ce0; }
+
+    .crt {
+      position: relative; flex: 1; min-height: 0;
+      border: 3px solid var(--cyan); border-radius: 14px;
+      overflow: hidden; background: #000;
+      box-shadow: 0 0 26px rgba(0,240,255,0.5), inset 0 0 40px rgba(0,0,0,0.8);
+    }
+    #game-frame {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      border: 0; background: #000;
+      opacity: 0; transition: opacity 0.25s ease;
+    }
+    #game-frame.on { opacity: 1; }
+    .crt-scan {
+      position: absolute; inset: 0; z-index: 5; pointer-events: none;
+      background: repeating-linear-gradient(180deg, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.14) 2px 4px);
+    }
+    .crt-glass {
+      position: absolute; inset: 0; z-index: 6; pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.35) 100%);
+    }
+    /* TV power-on flash */
+    .poweron {
+      position: absolute; inset: 0; z-index: 7; pointer-events: none;
+      background: #fff; opacity: 0; display: none;
+    }
+    .poweron.go { display: block; animation: tvOn 0.7s ease-out forwards; }
+    @keyframes tvOn {
+      0%   { opacity: 1; transform: scaleY(0.006); filter: brightness(3); }
+      28%  { opacity: 1; transform: scaleY(0.006); }
+      55%  { opacity: 1; transform: scaleY(1); filter: brightness(2.2); }
+      100% { opacity: 0; transform: scaleY(1); }
+    }
+    .poweron.off { display: block; animation: tvOff 0.34s ease-in forwards; }
+    @keyframes tvOff {
+      0%   { opacity: 0; transform: scaleY(1); }
+      55%  { opacity: 1; transform: scaleY(1); filter: brightness(2); }
+      100% { opacity: 1; transform: scaleY(0.006); filter: brightness(4); }
+    }
+
     @media (max-width: 380px) {
       .arrow { width: 38px; height: 38px; font-size: 14px; }
       .game-name { font-size: 15px; }
@@ -267,6 +334,22 @@
 
     <div class="dots" id="dots"></div>
     <a href="../index.html" class="back">‹ EXIT TO HYPERPIECES</a>
+  </div>
+
+  <!-- PLAY MODE: game runs inside the cabinet's CRT screen -->
+  <div class="play-mode" id="play-mode">
+    <div class="cab-shell">
+      <div class="cab-top">
+        <span class="cab-now" id="cab-now">NOW PLAYING</span>
+        <button class="eject" id="eject">⏏ EJECT</button>
+      </div>
+      <div class="crt" id="crt">
+        <iframe id="game-frame" title="game" allow="autoplay"></iframe>
+        <div class="crt-scan"></div>
+        <div class="crt-glass"></div>
+        <div class="poweron" id="poweron"></div>
+      </div>
+    </div>
   </div>
 
   <!-- Leaderboard modal -->
@@ -317,10 +400,11 @@
         <h2 class="game-name">${g.name}</h2>
         <p class="game-tag">${g.tag}</p>
         <div class="cab-buttons">
-          <a class="cb cb-play" href="${g.path}">▶ PLAY NOW</a>
+          <button class="cb cb-play">▶ PLAY NOW</button>
           <button class="cb cb-lb" data-game="${g.id}" data-name="${g.name}">🏆 LEADERBOARD</button>
         </div>`;
       dotsEl.innerHTML = GAMES.map((_, i) => `<span class="dot ${i===idx?'on':''}" data-i="${i}"></span>`).join('');
+      cabinet.querySelector('.cb-play').addEventListener('click', () => launchGame(g));
       cabinet.querySelector('.cb-lb').addEventListener('click', () => openLeaderboard(g.id, g.name));
       dotsEl.querySelectorAll('.dot').forEach(d => d.addEventListener('click', () => { idx = +d.dataset.i; render(); }));
     }
@@ -329,6 +413,10 @@
     document.getElementById('prev').addEventListener('click', () => go(-1));
     document.getElementById('next').addEventListener('click', () => go(1));
     document.addEventListener('keydown', e => {
+      if (document.getElementById('play-mode').classList.contains('open')) {
+        if (e.key === 'Escape') document.getElementById('eject').click();
+        return; // let the game handle its own keys
+      }
       if (document.getElementById('modal').classList.contains('open')) { if (e.key==='Escape') closeModal(); return; }
       if (e.key === 'ArrowLeft') go(-1);
       if (e.key === 'ArrowRight') go(1);
@@ -341,6 +429,38 @@
       const dx = e.changedTouches[0].clientX - tx;
       if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
     }, {passive:true});
+
+    // ── Play mode: load game inside cabinet with CRT power-on ──
+    const playMode = document.getElementById('play-mode');
+    const frame = document.getElementById('game-frame');
+    const poweron = document.getElementById('poweron');
+    const cabNow = document.getElementById('cab-now');
+
+    function launchGame(g) {
+      cabNow.textContent = 'NOW PLAYING · ' + g.name.toUpperCase();
+      playMode.classList.add('open');
+      frame.classList.remove('on');
+      frame.src = g.path;
+      // CRT power-on
+      poweron.classList.remove('off'); poweron.classList.remove('go');
+      void poweron.offsetWidth; // restart animation
+      poweron.classList.add('go');
+      setTimeout(() => frame.classList.add('on'), 330);
+      setTimeout(() => poweron.classList.remove('go'), 720);
+    }
+
+    function eject() {
+      poweron.classList.remove('go');
+      void poweron.offsetWidth;
+      poweron.classList.add('off');
+      frame.classList.remove('on');
+      setTimeout(() => {
+        poweron.classList.remove('off');
+        frame.src = 'about:blank';
+        playMode.classList.remove('open');
+      }, 340);
+    }
+    document.getElementById('eject').addEventListener('click', eject);
 
     // ── Leaderboard ──
     const modal = document.getElementById('modal');

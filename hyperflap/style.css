@@ -92,6 +92,16 @@ h2 { font-size: 1rem; color: var(--mint); margin-bottom: 16px; line-height: 1.5;
   content: "✓"; position: absolute; top: 2px; right: 3px;
   font-size: 8px; color: var(--mint); text-shadow: 0 0 4px #000;
 }
+.piece .wt {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  font-size: 6px; text-align: center; padding: 2px 0;
+  color: #fff; background: rgba(0,0,0,0.6); letter-spacing: 0.5px;
+}
+.weight-info {
+  font-size: 0.5rem; color: var(--text); opacity: 0.8;
+  margin: -8px 0 16px; line-height: 1.6;
+}
+.weight-info b { color: var(--mint); }
 
 /* ── Buttons ── */
 .btn {

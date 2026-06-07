@@ -1,0 +1,31 @@
+/* HyperArcade shared synthwave theme.
+   Link AFTER a game's own style.css to re-skin its menus to match the cabinet.
+   Works by overriding the CSS custom properties the games already use. */
+:root {
+  --mint: #00f0ff;        /* primary -> cyan */
+  --mint-dim: #ff2bd6;    /* secondary -> magenta */
+  --bg: #0a0014;
+  --panel-bg: #190a30;
+  --board-bg: #10001f;
+  --board-top: #1a0535;
+  --board-bot: #3d0a52;
+  --grid: rgba(0, 240, 255, 0.10);
+  --gold: #ffe600;
+}
+
+body {
+  background: linear-gradient(180deg, #1a0535 0%, #0a0014 100%) !important;
+}
+
+/* Neon logo + panel glow */
+.logo {
+  text-shadow: 0 0 6px var(--mint), 0 0 16px var(--mint), 3px 3px 0 var(--mint-dim) !important;
+}
+.panel {
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.28) !important;
+}
+
+/* Selected-piece highlight stays cyan via --mint; ensure board glow is neon */
+.board-wrap {
+  box-shadow: 0 0 24px rgba(0, 240, 255, 0.25) !important;
+}

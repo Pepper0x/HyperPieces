@@ -24,6 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Selectable pieces (25, spread across owned pool) ──
   const PIECE_IDS = [21,99,120,229,339,421,525,620,693,758,937,963,1028,1072,1168,1212,1276,1412,1598,1773,1848,1859,1946,2115,2204];
+  // Each piece has a weight: heavier falls faster (harder) but scores more per pipe.
+  const WEIGHT_TIERS = [0.85, 0.95, 1.05, 1.15, 1.25];
+  const WEIGHTS = {};
+  PIECE_IDS.forEach((id, i) => { WEIGHTS[id] = WEIGHT_TIERS[i % WEIGHT_TIERS.length]; });
+  const pointsPerPipe = w => Math.round(10 * w);   // 9..13 pts per pipe
   const imgPath = id => `../assets/nfts/${id}.jpg`;
 
   // ── Elements ──
@@ -52,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── State ──
   const BEST_KEY = 'hyperflapBest';
   const state = {
-    playerName: '', selectedId: PIECE_IDS[0],
+    playerName: '', selectedId: PIECE_IDS[0], weight: WEIGHTS[PIECE_IDS[0]],
     score: 0, best: +(localStorage.getItem(BEST_KEY) || 0),
     running: false, paused: false, started: false, gameOver: false,
     bird: null, pipes: [], raf: null, lastSpawnX: 0,
@@ -75,14 +80,28 @@ document.addEventListener('DOMContentLoaded', () => {
     im.src = imgPath(id); im.alt = 'Piece ' + id; im.loading = 'lazy';
     im.onerror = () => { d.style.display = 'none'; };
     d.appendChild(im);
+    const wt = document.createElement('span');
+    wt.className = 'wt';
+    wt.textContent = WEIGHTS[id].toFixed(2) + '×';
+    d.appendChild(wt);
     d.addEventListener('click', () => {
       el.pieceGrid.querySelectorAll('.piece').forEach(p => p.classList.remove('sel'));
       d.classList.add('sel');
       state.selectedId = id;
+      state.weight = WEIGHTS[id];
       birdImg.src = imgPath(id);
+      updateWeightInfo();
     });
     el.pieceGrid.appendChild(d);
   });
+
+  function updateWeightInfo() {
+    const info = document.getElementById('weight-info');
+    if (!info) return;
+    const w = state.weight;
+    const label = w <= 0.9 ? 'FLOATY' : w >= 1.2 ? 'HEAVY' : 'BALANCED';
+    info.innerHTML = `Weight <b>${w.toFixed(2)}×</b> · ${label} · ${pointsPerPipe(w)} pts/pipe`;
+  }
 
   // ── Canvas sizing ──
   function sizeBoard() {
@@ -97,8 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const h = el.canvas.height, w = el.canvas.width, s = h / 600;
     return {
       w, h, s,
-      gravity: 0.46 * s,
-      flap: -8.6 * s,
+      gravity: 0.46 * s * state.weight,
+      flap: -8.6 * s * (0.92 + 0.08 * state.weight),
       pipeSpeed: 2.7 * s + Math.min(state.score * 0.03 * s, 1.6 * s),
       gap: 178 * s,
       pipeW: 62 * s,
@@ -159,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
       p.x -= c.pipeSpeed;
       // score
       if (!p.scored && p.x + c.pipeW < b.x) {
-        p.scored = true; state.score++;
+        p.scored = true; state.score += pointsPerPipe(state.weight);
         el.score.textContent = state.score;
       }
       // collision (bird as circle-ish box)
@@ -327,7 +346,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   el.lbMenu.addEventListener('click', () => show(el.startScreen));
 
+  // Hide back-link when embedded in the arcade cabinet (EJECT handles exit)
+  if (window.self !== window.top) {
+    document.querySelectorAll('.back-link').forEach(e => e.style.display = 'none');
+  }
+
   // init
   sizeBoard();
+  updateWeightInfo();
   show(el.startScreen);
 });

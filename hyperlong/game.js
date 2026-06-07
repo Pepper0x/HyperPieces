@@ -434,6 +434,9 @@ document.addEventListener('DOMContentLoaded', () => {
   el.lbMenuBtn.addEventListener('click', () => show(el.startScreen));
 
   // ── Init ────────────────────────────────────────────────
+  if (window.self !== window.top) {
+    document.querySelectorAll('.back-link').forEach(e => e.style.display = 'none');
+  }
   el.best.textContent = getBest();
   sizeBoard();
   show(el.startScreen);
