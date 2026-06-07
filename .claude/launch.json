@@ -4,7 +4,7 @@
     {
       "name": "hyperpieces",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["--yes", "serve", "-l", "3456", "hyperdrop"],
+      "runtimeArgs": ["--yes", "serve", "-l", "3456", "."],
       "port": 3456
     }
   ]
