@@ -4,7 +4,7 @@
     {
       "name": "hyperpieces",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["--yes", "serve", "-l", "3456", "."],
+      "runtimeArgs": ["--yes", "serve", "-l", "3456", "/Users/Brandon/Desktop/hyperpieces/HyperPieces-main"],
       "port": 3456
     }
   ]

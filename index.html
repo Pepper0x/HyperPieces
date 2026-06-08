@@ -262,6 +262,123 @@
       color: rgba(255,255,255,0.5); z-index: 1002;
       letter-spacing: 1px;
     }
+
+    /* ════════════════════════════════════════════
+       ZEN REDESIGN — nav, hero, story, timeline, footer
+       ════════════════════════════════════════════ */
+    :root {
+      --ink: #0d1411;
+      --mint: #8BF5C5;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* ── Minimal sticky nav ── */
+    .site-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; transition: background .35s, box-shadow .35s, padding .35s;
+    }
+    .site-nav.scrolled {
+      background: rgba(139,245,197,0.9);
+      backdrop-filter: saturate(140%) blur(10px);
+      -webkit-backdrop-filter: saturate(140%) blur(10px);
+      box-shadow: 0 1px 16px rgba(0,0,0,0.08); padding: 10px 20px;
+    }
+    .site-nav .brand { font-family: 'Pacifico', cursive; font-size: 22px; color: var(--ink); text-decoration: none; }
+    .nav-links { display: flex; gap: 22px; align-items: center; }
+    .nav-links a {
+      font-family: var(--sans); font-size: 12px; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--ink); text-decoration: none;
+      opacity: .65; transition: opacity .2s;
+    }
+    .nav-links a:hover { opacity: 1; }
+    @media (max-width: 520px) { .nav-links { gap: 14px; } .nav-links a { font-size: 11px; letter-spacing: 1px; } }
+
+    /* ── Hero refinements ── */
+    .hero { min-height: 100svh; justify-content: center; padding-top: 80px; }
+    .hero-tag {
+      font-family: 'Pacifico', cursive; font-size: clamp(20px, 5vw, 28px);
+      margin: 6px 0 10px; opacity: .9;
+    }
+    .hero-sub {
+      font-family: var(--sans); font-size: 13px; letter-spacing: 2.5px;
+      text-transform: uppercase; opacity: .5; margin: 0 0 36px;
+    }
+    .hero .btn-arcade { max-width: 320px; }
+
+    /* ── Story ── */
+    .story {
+      width: 100%; padding: 96px 24px; display: flex; flex-direction: column;
+      align-items: center; text-align: center;
+    }
+    .eyebrow {
+      font-family: var(--sans); font-size: 12px; letter-spacing: 3px;
+      text-transform: uppercase; opacity: .45; margin-bottom: 18px;
+    }
+    .story h2 { font-family: 'Pacifico', cursive; font-size: clamp(34px, 8vw, 58px); margin: 0 0 30px; line-height: 1.05; }
+    .story .lede {
+      font-family: var(--sans); font-size: clamp(18px, 4.6vw, 23px); font-weight: 600;
+      line-height: 1.55; max-width: 620px; margin: 0 0 28px;
+    }
+    .story p {
+      font-family: var(--sans); font-size: 16px; line-height: 1.85;
+      max-width: 600px; opacity: .8; margin: 0 auto 22px;
+    }
+    .sig { margin-top: 22px; }
+    .sig .name { font-family: 'Pacifico', cursive; font-size: 28px; }
+    .sig .role { font-family: var(--sans); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; opacity: .5; margin-top: 4px; }
+
+    /* ── Timeline ── */
+    .timeline-section { width: 100%; padding: 20px 24px 96px; display: flex; flex-direction: column; align-items: center; }
+    .timeline-head { text-align: center; margin-bottom: 52px; }
+    .timeline-head h2 { font-family: 'Pacifico', cursive; font-size: clamp(30px, 7vw, 50px); margin: 0; }
+    .timeline-head p { font-family: var(--sans); font-size: 13px; letter-spacing: 2px; text-transform: uppercase; opacity: .5; margin-top: 10px; }
+    .timeline { position: relative; width: 100%; max-width: 640px; padding-left: 40px; }
+    .timeline::before {
+      content: ""; position: absolute; left: 10px; top: 8px; bottom: 8px; width: 2px;
+      background: linear-gradient(var(--ink), rgba(13,20,17,0.12));
+    }
+    .tl-item { position: relative; margin-bottom: 40px; text-align: left; }
+    .tl-item:last-child { margin-bottom: 0; }
+    .tl-item::before {
+      content: ""; position: absolute; left: -38px; top: 4px;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--mint); border: 3px solid var(--ink);
+    }
+    .tl-item.now::before { background: var(--ink); box-shadow: 0 0 0 5px rgba(13,20,17,0.12); }
+    .tl-date { font-family: var(--sans); font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; opacity: .5; }
+    .tl-title { font-family: 'Pacifico', cursive; font-size: 23px; margin: 4px 0 7px; }
+    .tl-desc { font-family: var(--sans); font-size: 15px; line-height: 1.7; opacity: .8; max-width: 540px; }
+    .timeline-close {
+      text-align: center; max-width: 600px; margin: 52px auto 0;
+      font-family: var(--sans); font-style: italic; font-size: 16px; line-height: 1.7; opacity: .7;
+    }
+
+    /* ── Footer ── */
+    .site-footer {
+      width: 100%; background: var(--ink); color: var(--mint);
+      padding: 64px 24px 54px; display: flex; flex-direction: column; align-items: center; gap: 26px;
+    }
+    .site-footer h3 { font-family: 'Pacifico', cursive; font-size: 30px; margin: 0; }
+    .footer-group { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .footer-group .label { font-family: var(--sans); font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; opacity: .45; }
+    .footer-links { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .footer-links a {
+      font-family: var(--sans); font-size: 14px; color: var(--ink); background: var(--mint);
+      padding: 12px 22px; border-radius: 10px; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 7px;
+      transition: transform .15s, box-shadow .2s;
+    }
+    .footer-links a:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(139,245,197,.3); }
+    .footer-note { font-family: var(--sans); font-size: 12px; opacity: .45; letter-spacing: 1px; margin-top: 8px; }
+
+    /* ── Scroll reveal ── */
+    .reveal { opacity: 0; transform: translateY(26px); transition: opacity .8s ease, transform .8s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; transform: none !important; } }
+
+    /* dark wave (mint → ink) before footer */
+    .wave-dark svg path { fill: var(--ink); }
   </style>
 </head>
 <body>
@@ -278,53 +395,73 @@
     <span class="lb-counter" id="lb-counter"></span>
   </div>
 
+  <!-- ── NAV ── -->
+  <nav class="site-nav" id="nav">
+    <a href="#top" class="brand">HyperPieces</a>
+    <div class="nav-links">
+      <a href="hyperarcade/index.html">Arcade</a>
+      <a href="#story">Story</a>
+      <a href="#traits">Traits</a>
+    </div>
+  </nav>
+
   <!-- ── HERO ── -->
-  <section class="hero">
+  <section class="hero" id="top">
     <img src="assets/header.png" alt="HyperPieces" class="hero-img fade-in" />
     <h1 class="fade-in">HyperPieces</h1>
+    <p class="hero-tag fade-in">We never left.</p>
+    <p class="hero-sub fade-in">2,222 pieces · One keeper · No exit</p>
+    <a href="hyperarcade/index.html" class="btn-secondary btn-game btn-arcade fade-in">👾 Enter HyperArcade</a>
+    <a href="#story" class="scroll-cue" aria-label="Scroll to the story"><span class="chev">▾</span></a>
+  </section>
 
-    <!-- Games -->
-    <div class="action-section fade-in">
-      <p class="action-label">Play</p>
-      <a href="hyperarcade/index.html" class="btn-secondary btn-game btn-arcade">👾 Enter HyperArcade</a>
+  <!-- ── STORY ── -->
+  <section class="story" id="story">
+    <p class="eyebrow reveal">The Keeper's Note</p>
+    <h2 class="reveal">We never left.</h2>
+    <p class="lede reveal">2,222 pieces. One keeper. No exit.</p>
+    <p class="reveal">HyperPieces is a collection of 2,222 characters living on Hyperliquid. No promises. No roadmap theater. Just art worth collecting.</p>
+    <p class="reveal">The project was born loud, sold out fast, and wow'd everyone at reveal. Then the founder drifted off, the way founders sometimes do, leaving a beautiful collection behind. I stuck around — not for an airdrop, not for a pump, but because I actually love these pieces. For the past year I've been the keeper: holding the line, building when inspired, and treating this like the art collection it deserves to be. HyperPieces isn't a startup chasing utility. It's an IP with a pulse, and a community that vibes with the aesthetic.</p>
+    <div class="sig reveal">
+      <div class="name">Pepper</div>
+      <div class="role">Keeper of Pieces</div>
     </div>
+  </section>
 
-    <!-- Marketplaces -->
-    <div class="action-section fade-in">
-      <p class="action-label">Trade</p>
-      <div class="btn-row">
-        <a href="https://opensea.io/collection/hyperpieces-hyperevm" target="_blank" class="btn-secondary">
-          <span class="btn-icon">🌊</span> OpenSea
-        </a>
-        <a href="https://drip.trade/collections/hyperpieces?tab=items" target="_blank" class="btn-secondary">
-          <span class="btn-icon">💧</span> Drip.Trade
-        </a>
+  <!-- ── TIMELINE ── -->
+  <section class="timeline-section">
+    <div class="timeline-head reveal">
+      <h2>Piece by piece</h2>
+      <p>How we got here</p>
+    </div>
+    <div class="timeline">
+      <div class="tl-item reveal">
+        <div class="tl-date">March 20, 2025</div>
+        <div class="tl-title">The mint opens</div>
+        <div class="tl-desc">Public mint goes live to a community excited to participate.</div>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-date">March 22, 2025</div>
+        <div class="tl-title">Sold out</div>
+        <div class="tl-desc">All 2,222 pieces minted. Strong volume, with prices running 200%+ above mint.</div>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-date">March 24, 2025</div>
+        <div class="tl-title">The reveal</div>
+        <div class="tl-desc">A strategic pause pays off. The art drops, exceeds expectations, and the collection finds its identity.</div>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-date">Spring 2025</div>
+        <div class="tl-title">The founder disappears</div>
+        <div class="tl-desc">After a wave of promises — airdrops, verification, collabs — he makes Pepper a Discord mod, goes quiet, and never returns.</div>
+      </div>
+      <div class="tl-item now reveal">
+        <div class="tl-date">Now</div>
+        <div class="tl-title">The keeper era</div>
+        <div class="tl-desc">Rather than let the art die, one holder steps up to steward the IP. No roadmap, no promises. Just protecting what's already great.</div>
       </div>
     </div>
-
-    <!-- Community -->
-    <div class="action-section fade-in">
-      <p class="action-label">Community</p>
-      <div class="btn-row">
-        <a href="https://x.com/HyperPiecesCTO" target="_blank" class="btn-secondary">
-          <span class="btn-icon">𝕏</span> Twitter
-        </a>
-        <a href="https://discord.gg/9nyuGTdqmz" target="_blank" class="btn-secondary">
-          <span class="btn-icon">💬</span> Discord
-        </a>
-      </div>
-    </div>
-
-    <!-- Explore -->
-    <div class="action-section fade-in">
-      <p class="action-label">Explore</p>
-      <a href="#traits" class="btn-secondary btn-full">🔍 Trait Library</a>
-    </div>
-
-    <!-- Scroll cue -->
-    <a href="#traits" class="scroll-cue" aria-label="Scroll to Trait Library">
-      <span class="chev">▾</span>
-    </a>
+    <p class="timeline-close reveal">New home, same energy. The art front and center, surrounded by community. Room to build.</p>
   </section>
 
   <!-- ── WAVE DIVIDER ── -->
@@ -342,6 +479,47 @@
       <div id="categories-container"></div>
     </div>
   </section>
+
+  <!-- ── WAVE → DARK ── -->
+  <div class="section-divider wave-dark">
+    <svg viewBox="0 0 1440 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,24 C360,48 1080,0 1440,24 L1440,48 L0,48 Z"/>
+    </svg>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <footer class="site-footer">
+    <h3>HyperPieces</h3>
+    <div class="footer-group">
+      <span class="label">Trade</span>
+      <div class="footer-links">
+        <a href="https://opensea.io/collection/hyperpieces-hyperevm" target="_blank">🌊 OpenSea</a>
+        <a href="https://drip.trade/collections/hyperpieces?tab=items" target="_blank">💧 Drip.Trade</a>
+      </div>
+    </div>
+    <div class="footer-group">
+      <span class="label">Community</span>
+      <div class="footer-links">
+        <a href="https://x.com/HyperPiecesCTO" target="_blank">𝕏 Twitter</a>
+        <a href="https://discord.gg/9nyuGTdqmz" target="_blank">💬 Discord</a>
+      </div>
+    </div>
+    <p class="footer-note">Kept by Pepper · Living on Hyperliquid</p>
+  </footer>
+
+  <!-- ── Scroll behaviour: sticky-nav state + reveal-on-scroll ── -->
+  <script>
+    (function () {
+      const nav = document.getElementById('nav');
+      const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 30);
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+      }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+      document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    })();
+  </script>
 
   <script>
     // Local trait images — downloaded from IPFS, served from our own domain (fast + reliable).
