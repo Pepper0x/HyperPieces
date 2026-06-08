@@ -17,9 +17,9 @@ body {
   background: linear-gradient(180deg, #1a0535 0%, #0a0014 100%) !important;
 }
 
-/* Neon logo + panel glow */
+/* Neon logo — subtle glow + crisp offset so it stays legible */
 .logo {
-  text-shadow: 0 0 6px var(--mint), 0 0 16px var(--mint), 3px 3px 0 var(--mint-dim) !important;
+  text-shadow: 0 0 4px rgba(0,240,255,0.45), 2px 2px 0 var(--mint-dim) !important;
 }
 .panel {
   box-shadow: 0 0 30px rgba(0, 240, 255, 0.28) !important;

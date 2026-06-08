@@ -33,19 +33,22 @@
       position: fixed; inset: 0; z-index: 0; overflow: hidden;
       background: linear-gradient(180deg, #1a0535 0%, #3d0a52 38%, #5e1170 50%, #0a0014 50%, #0a0014 100%);
     }
+    /* HyperLiquid emblem (replaces the synthwave sun).
+       Drop the official logo at assets/hyperliquid-logo.png to show the real mark;
+       a HyperLiquid-mint glowing disc shows as the fallback. */
     .sun {
-      position: absolute; left: 50%; top: 23%;
-      width: 300px; height: 300px; transform: translate(-50%,-50%);
+      position: absolute; left: 50%; top: 22%;
+      width: 240px; height: 240px; transform: translate(-50%,-50%);
       border-radius: 50%;
-      background: linear-gradient(180deg, #ffe600 0%, #ff8a00 45%, #ff2bd6 100%);
-      box-shadow: 0 0 80px rgba(255,80,200,0.5);
+      background:
+        url('../assets/hyperliquid-logo.png') center / 74% no-repeat,
+        radial-gradient(circle at 50% 42%, #cdfff2 0%, #4fdcc4 56%, #149e86 100%);
+      box-shadow: 0 0 70px rgba(80, 240, 200, 0.55), inset 0 0 30px rgba(255,255,255,0.25);
+      animation: emblem-pulse 4s ease-in-out infinite;
     }
-    /* sun horizontal slats */
-    .sun::after {
-      content: ""; position: absolute; inset: 0; border-radius: 50%;
-      background: repeating-linear-gradient(180deg, transparent 0 14px, var(--bg1) 14px 20px);
-      -webkit-mask: linear-gradient(180deg, transparent 52%, #000 52%);
-              mask: linear-gradient(180deg, transparent 52%, #000 52%);
+    @keyframes emblem-pulse {
+      0%,100% { box-shadow: 0 0 60px rgba(80,240,200,0.45), inset 0 0 30px rgba(255,255,255,0.25); }
+      50%     { box-shadow: 0 0 90px rgba(80,240,200,0.75), inset 0 0 30px rgba(255,255,255,0.3); }
     }
     /* grid floor */
     .grid {

@@ -21,9 +21,9 @@ body { background: linear-gradient(180deg, #1a0535 0%, #0a0014 100%) !important;
 #start-screen h1 {
   font-family: 'Pacifico', cursive !important;
   font-size: 2.6rem !important;
-  text-shadow: 0 0 8px #00f0ff, 0 0 18px #00f0ff, 3px 3px 0 #ff2bd6 !important;
+  text-shadow: 0 0 4px rgba(0,240,255,0.45), 2px 2px 0 #ff2bd6 !important;
 }
-.screen h1, .screen h2 { text-shadow: 0 0 8px rgba(0,240,255,0.6); }
+.screen h1, .screen h2 { text-shadow: 0 0 5px rgba(0,240,255,0.4); }
 
 /* Panel glow */
 .screen-content { box-shadow: 0 0 30px rgba(0,240,255,0.3) !important; }
