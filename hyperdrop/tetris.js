@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Touch State ---
-    const touch = { startX: 0, startY: 0, currentX: 0, startTime: 0, isDragging: false, isSwipedDown: false, movedHorizontally: false };
+    const touch = { startX: 0, startY: 0, currentX: 0, currentY: 0, startTime: 0, isDragging: false, movedHorizontally: false, movedVertically: false };
 
     // --- Supabase (Global Leaderboard) ---
     const SB_URL = 'https://xdacfbkdbkhptipfikgr.supabase.co';
@@ -576,48 +576,63 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Mobile controls: drag horizontally to slide the piece to your finger,
+    // tap to rotate, drag DOWN to soft-drop at finger speed, fast flick down = hard drop.
     function handleTouchStart(e) {
         if (game.isGameOver || game.isPaused || !game.gameStarted || e.touches.length !== 1) return;
         e.preventDefault();
         const t = e.touches[0];
-        touch.startX = t.clientX; touch.startY = t.clientY; touch.currentX = t.clientX;
-        touch.startTime = Date.now(); touch.isDragging = false; touch.isSwipedDown = false; touch.movedHorizontally = false;
+        touch.startX = t.clientX; touch.startY = t.clientY;
+        touch.currentX = t.clientX; touch.currentY = t.clientY;
+        touch.startTime = Date.now();
+        touch.isDragging = false; touch.movedHorizontally = false; touch.movedVertically = false;
     }
 
     function handleTouchMove(e) {
         if (game.isGameOver || game.isPaused || !game.gameStarted || !touch.startTime || e.touches.length !== 1) return;
         e.preventDefault();
         const t = e.touches[0];
-        const deltaXTotal = t.clientX - touch.startX;
-        const deltaYTotal = t.clientY - touch.startY;
-        const deltaXInstant = t.clientX - touch.currentX;
-        const moveThresholdPixels = game.blockSize * config.touch.moveThresholdRatio;
-        if (Math.abs(deltaXInstant) > moveThresholdPixels) {
-            if (movePiece(deltaXInstant > 0 ? 1 : -1)) {
+        const dx = t.clientX - touch.currentX;
+        const dy = t.clientY - touch.currentY;
+        const hThresh = game.blockSize * 0.5;   // px per column step
+        const vThresh = game.blockSize * 0.55;  // px per soft-drop row
+        const flick   = game.blockSize * 2.5;   // fast downward flick = hard drop
+
+        if (Math.abs(dx) >= Math.abs(dy)) {
+            // horizontal: step toward the finger, possibly multiple columns per event
+            if (Math.abs(dx) > hThresh) {
+                const dir = dx > 0 ? 1 : -1;
+                let steps = Math.floor(Math.abs(dx) / hThresh);
+                while (steps-- > 0 && movePiece(dir)) { /* slide */ }
                 touch.currentX = t.clientX;
-                touch.movedHorizontally = true;
-                touch.isDragging = true;
-                touch.startX = t.clientX;
-                touch.startY = t.clientY;
+                touch.movedHorizontally = true; touch.isDragging = true;
             }
-        }
-        if (!touch.isSwipedDown && deltaYTotal > config.touch.swipeDownThreshold && Math.abs(deltaYTotal) > Math.abs(deltaXTotal) * 1.5) {
-            touch.isSwipedDown = true;
-            hardDrop();
-            touch.startTime = 0;
+        } else if (dy > 0) {
+            if (dy > flick) {            // fast flick down → hard drop
+                hardDrop(); touch.startTime = 0; return;
+            }
+            if (dy > vThresh) {          // slow drag down → soft drop following finger
+                let steps = Math.floor(dy / vThresh);
+                while (steps-- > 0) moveDown();
+                touch.currentY = t.clientY;
+                touch.movedVertically = true; touch.isDragging = true;
+            }
         }
     }
 
     function handleTouchEnd(e) {
-        if (game.isGameOver || game.isPaused || !game.gameStarted || !touch.startTime) return;
+        if (game.isGameOver || game.isPaused || !game.gameStarted || !touch.startTime) {
+            touch.startTime = 0; return;
+        }
         const endX = e.changedTouches[0].clientX;
         const endY = e.changedTouches[0].clientY;
-        const touchDuration = Date.now() - touch.startTime;
-        const totalMove = Math.sqrt(Math.pow(endX - touch.startX, 2) + Math.pow(endY - touch.startY, 2));
-        if (!touch.isSwipedDown && !touch.movedHorizontally && touchDuration < config.touch.tapTimeout && totalMove < config.touch.dragThreshold * 1.5) {
+        const duration = Date.now() - touch.startTime;
+        const totalMove = Math.hypot(endX - touch.startX, endY - touch.startY);
+        // tap (no drag, quick) = rotate
+        if (!touch.movedHorizontally && !touch.movedVertically && duration < config.touch.tapTimeout && totalMove < game.blockSize * 0.6) {
             rotatePiece();
         }
-        touch.startTime = 0; touch.isDragging = false; touch.isSwipedDown = false; touch.movedHorizontally = false;
+        touch.startTime = 0; touch.isDragging = false; touch.movedHorizontally = false; touch.movedVertically = false;
     }
 
     // --- Initialization & Event Listener Setup ---

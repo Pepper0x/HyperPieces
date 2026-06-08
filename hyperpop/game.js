@@ -20,13 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) { return null; }
   }
 
-  // ── Bubble types: one distinct color each (matching is purely by color) ──
+  // ── Bubble types: each piece has a distinct background color, so the whole
+  //    round NFT image IS the match signal (no borders needed). ──
   const TYPES = [
-    { color: '#ff4d6d', id: 229 },
-    { color: '#36c5ff', id: 99  },
-    { color: '#ffd23f', id: 339 },
-    { color: '#b06bff', id: 111 },
-    { color: '#4dff9e', id: 75  },
+    { color: '#8BF5C5', id: 120 },
+    { color: '#ff4d6d', id: 620 },
+    { color: '#ffd23f', id: 963 },
+    { color: '#36c5ff', id: 968 },
+    { color: '#b06bff', id: 1191 },
   ];
   const imgs = TYPES.map(t => { const im = new Image(); im.src = `../assets/nfts/${t.id}.jpg`; return im; });
 
@@ -219,23 +220,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Render ──
   function drawBubble(cx, cy, type, radius) {
-    const t = TYPES[type]; const rr = radius || R;
+    const rr = radius || R; const im = imgs[type];
     ctx.save();
-    ctx.beginPath(); ctx.arc(cx, cy, rr - 1, 0, Math.PI * 2);
-    ctx.fillStyle = t.color; ctx.fill();
-    // piece icon (round, smaller, so the color ring stays dominant)
-    const im = imgs[type];
+    ctx.beginPath(); ctx.arc(cx, cy, rr - 1, 0, Math.PI * 2); ctx.closePath(); ctx.clip();
     if (im && im.complete && im.naturalWidth) {
-      ctx.save();
-      ctx.beginPath(); ctx.arc(cx, cy, rr * 0.6, 0, Math.PI * 2); ctx.clip();
-      ctx.drawImage(im, cx - rr*0.6, cy - rr*0.6, rr*1.2, rr*1.2);
-      ctx.restore();
+      ctx.drawImage(im, cx - rr, cy - rr, rr * 2, rr * 2);   // full round image, no border
+    } else {
+      ctx.fillStyle = TYPES[type].color; ctx.fillRect(cx - rr, cy - rr, rr * 2, rr * 2);
     }
-    // highlight + outline
-    ctx.beginPath(); ctx.arc(cx - rr*0.3, cy - rr*0.3, rr*0.18, 0, Math.PI*2);
-    ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fill();
-    ctx.beginPath(); ctx.arc(cx, cy, rr - 1, 0, Math.PI * 2);
-    ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(0,0,0,0.45)'; ctx.stroke();
     ctx.restore();
   }
 

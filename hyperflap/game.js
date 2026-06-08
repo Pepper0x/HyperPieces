@@ -61,9 +61,12 @@ document.addEventListener('DOMContentLoaded', () => {
     score: 0, best: +(localStorage.getItem(BEST_KEY) || 0),
     running: false, paused: false, started: false, gameOver: false,
     bird: null, pipes: [], raf: null, lastSpawnX: 0,
+    coins: [], particles: [], stars: [],
   };
   const birdImg = new Image();
   birdImg.src = imgPath(state.selectedId);
+  const coinImg = new Image(); coinImg.src = '../assets/nfts/1028.jpg';   // bonus piece to grab
+  const sunImg  = new Image(); sunImg.src  = '../assets/hyperliquid-logo.png'; // parallax backdrop
 
   // ── Screen mgmt ──
   function show(scr) {
@@ -130,12 +133,22 @@ document.addEventListener('DOMContentLoaded', () => {
   function resetGame() {
     const c = cfg();
     state.score = 0; state.started = false; state.gameOver = false; state.paused = false;
-    state.pipes = [];
+    state.pipes = []; state.coins = []; state.particles = [];
     state.bird = { x: c.birdX, y: c.h / 2, vel: 0, size: c.birdSize };
     state.lastSpawnX = c.w + 80;
+    // starfield for parallax depth
+    state.stars = [];
+    for (let i = 0; i < 40; i++) state.stars.push({ x: Math.random()*c.w, y: Math.random()*c.h, r: Math.random()*1.6+0.4, spd: Math.random()*0.4+0.15 });
     el.score.textContent = '0';
     el.best.textContent = state.best;
     el.tapHint.classList.remove('hidden');
+  }
+
+  function burst(x, y, color, n) {
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, sp = Math.random() * 3 + 1;
+      state.particles.push({ x, y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, life: 24, max: 24, color });
+    }
   }
 
   function flap() {
@@ -155,8 +168,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const c = cfg();
     const b = state.bird;
 
+    // parallax stars drift even on the idle screen
+    for (const st of state.stars) { st.x -= st.spd * (state.started ? 1 : 0.4); if (st.x < 0) { st.x = c.w; st.y = Math.random()*c.h; } }
+    // particles
+    for (const pt of state.particles) { pt.x += pt.vx; pt.y += pt.vy; pt.vy += 0.18; pt.life--; }
+    state.particles = state.particles.filter(pt => pt.life > 0);
+
     if (!state.started) {
-      // idle bob
       b.y = c.h / 2 + Math.sin(Date.now() / 300) * 8 * c.s;
       return;
     }
@@ -164,9 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
     b.vel += c.gravity;
     b.y += b.vel;
 
-    // ceiling clamp
     if (b.y < 0) { b.y = 0; b.vel = 0; }
-    // floor = death
     if (b.y + b.size > c.h) { return die(); }
 
     // spawn pipes by distance
@@ -176,12 +192,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // move pipes, score, collide
     for (const p of state.pipes) {
       p.x -= c.pipeSpeed;
-      // score
       if (!p.scored && p.x + c.pipeW < b.x) {
         p.scored = true; state.score += pointsPerPipe(state.weight);
         el.score.textContent = state.score;
+        burst(b.x + b.size/2, b.y + b.size/2, '#8BF5C5', 6);
       }
-      // collision (bird as circle-ish box)
       const bx = b.x, by = b.y, bs = b.size;
       const inX = bx + bs > p.x && bx < p.x + c.pipeW;
       if (inX) {
@@ -189,8 +204,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!inGap) return die();
       }
     }
-    // cull
     state.pipes = state.pipes.filter(p => p.x + c.pipeW > -10);
+
+    // collectibles — bonus piece floats in a gap, +25 and a pop when grabbed
+    const lastCoin = state.coins[state.coins.length - 1];
+    if (state.pipes.length && (!lastCoin || (c.w - lastCoin.x) >= c.spawnDist * 1.7)) {
+      const ref = state.pipes[state.pipes.length - 1];
+      const cy = ref.gapY + c.gap / 2;
+      state.coins.push({ x: c.w + c.pipeW, y: cy, r: c.birdSize * 0.4, taken: false, spin: 0 });
+    }
+    const bcx = b.x + b.size/2, bcy = b.y + b.size/2;
+    for (const coin of state.coins) {
+      coin.x -= c.pipeSpeed; coin.spin += 0.08;
+      if (!coin.taken && Math.hypot(coin.x - bcx, coin.y - bcy) < coin.r + b.size*0.4) {
+        coin.taken = true; state.score += 25; el.score.textContent = state.score;
+        burst(coin.x, coin.y, '#ffd23f', 14);
+      }
+    }
+    state.coins = state.coins.filter(coin => !coin.taken && coin.x + coin.r > -10);
   }
 
   function die() {
@@ -210,6 +241,18 @@ document.addEventListener('DOMContentLoaded', () => {
     g.addColorStop(0, '#1a0535'); g.addColorStop(0.5, '#3d0a52'); g.addColorStop(1, '#10001f');
     ctx.fillStyle = g; ctx.fillRect(0, 0, c.w, c.h);
 
+    // parallax HyperLiquid sun
+    if (sunImg.complete && sunImg.naturalWidth) {
+      const sd = c.w * 0.5; ctx.globalAlpha = 0.12;
+      ctx.drawImage(sunImg, c.w/2 - sd/2, c.h*0.12, sd, sd);
+      ctx.globalAlpha = 1;
+    }
+    // stars
+    for (const st of state.stars) {
+      ctx.fillStyle = `rgba(139,245,197,${0.25 + st.r*0.2})`;
+      ctx.fillRect(st.x, st.y, st.r, st.r);
+    }
+
     // distant grid floor
     ctx.strokeStyle = 'rgba(139,245,197,0.12)'; ctx.lineWidth = 1;
     const fy = c.h * 0.82;
@@ -220,6 +263,21 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const p of state.pipes) {
       drawPipe(p.x, 0, c.pipeW, p.gapY);                       // top
       drawPipe(p.x, p.gapY + c.gap, c.pipeW, c.h - (p.gapY + c.gap)); // bottom
+    }
+
+    // collectibles (spinning bonus piece with a gold halo)
+    for (const coin of state.coins) {
+      ctx.save();
+      ctx.translate(coin.x, coin.y);
+      ctx.shadowColor = '#ffd23f'; ctx.shadowBlur = 12;
+      ctx.beginPath(); ctx.arc(0, 0, coin.r, 0, Math.PI*2); ctx.closePath();
+      ctx.fillStyle = '#ffd23f'; ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.save(); ctx.beginPath(); ctx.arc(0, 0, coin.r*0.82, 0, Math.PI*2); ctx.clip();
+      ctx.scale(Math.cos(coin.spin), 1);   // gentle spin
+      if (coinImg.complete && coinImg.naturalWidth) ctx.drawImage(coinImg, -coin.r*0.82, -coin.r*0.82, coin.r*1.64, coin.r*1.64);
+      ctx.restore();
+      ctx.restore();
     }
 
     // bird
@@ -243,6 +301,14 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.fillRect(-b.size/2, -b.size/2, b.size, b.size);
     }
     ctx.restore();
+
+    // particles
+    for (const pt of state.particles) {
+      ctx.globalAlpha = Math.max(0, pt.life / pt.max);
+      ctx.fillStyle = pt.color;
+      ctx.fillRect(pt.x, pt.y, 3, 3);
+    }
+    ctx.globalAlpha = 1;
   }
 
   function drawPipe(x, y, w, h) {
