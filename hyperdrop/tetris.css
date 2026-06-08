@@ -212,6 +212,7 @@ body {
   flex-direction: column;
   align-items: center;
   width: 100%;
+  touch-action: none; /* no double-tap zoom anywhere in the play area */
 }
 #game-area.hidden { /* This is for the game area screen itself */
   display: none;
@@ -227,6 +228,7 @@ body {
   position: relative;
   margin: auto;
   flex-shrink: 0;
+  touch-action: none;
   /* Width and height set by JS */
 }
 

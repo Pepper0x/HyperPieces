@@ -624,6 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (game.isGameOver || game.isPaused || !game.gameStarted || !touch.startTime) {
             touch.startTime = 0; return;
         }
+        e.preventDefault();   // stop iOS double-tap-to-zoom on quick rotate taps
         const endX = e.changedTouches[0].clientX;
         const endY = e.changedTouches[0].clientY;
         const duration = Date.now() - touch.startTime;
