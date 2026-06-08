@@ -361,6 +361,30 @@
       font-family: var(--sans); font-style: italic; font-size: 16px; line-height: 1.7; opacity: .7;
     }
 
+    /* ── Arcade teaser ── */
+    .arcade-teaser {
+      width: 100%; padding: 86px 24px 96px;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+    }
+    .arcade-teaser h2 { font-family: 'Pacifico', cursive; font-size: clamp(30px, 7vw, 50px); margin: 0 0 8px; }
+    .arcade-teaser .sub {
+      font-family: var(--sans); font-size: 13px; letter-spacing: 2px;
+      text-transform: uppercase; opacity: .5; margin: 0 0 34px;
+    }
+    .game-strip {
+      display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
+      max-width: 680px; margin-bottom: 38px;
+    }
+    .game-card { width: 120px; text-decoration: none; color: var(--ink); }
+    .game-card img {
+      width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 14px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15); transition: transform .2s, box-shadow .2s;
+    }
+    .game-card:hover img { transform: translateY(-4px); box-shadow: 0 12px 26px rgba(0,0,0,0.24); }
+    .game-card .gname { font-family: 'Pacifico', cursive; font-size: 15px; margin-top: 9px; }
+    @media (max-width: 380px) { .game-card { width: 96px; } }
+    .arcade-teaser .btn-arcade { max-width: 340px; }
+
     /* ── Footer ── */
     .site-footer {
       width: 100%; background: var(--ink); color: var(--mint);
@@ -470,6 +494,20 @@
       </div>
     </div>
     <p class="timeline-close reveal">New home, same energy. The art front and center, surrounded by community. Room to build.</p>
+  </section>
+
+  <!-- ── ARCADE TEASER ── -->
+  <section class="arcade-teaser">
+    <h2 class="reveal">The HyperArcade</h2>
+    <p class="sub reveal">Five games · One machine</p>
+    <div class="game-strip reveal">
+      <a class="game-card" href="hyperdrop/index.html"><img src="assets/games/hyperdrop.jpg" alt="HyperDrop" /><div class="gname">HyperDrop</div></a>
+      <a class="game-card" href="hyperlong/index.html"><img src="assets/games/hyperlong.jpg" alt="HyperLong" /><div class="gname">HyperLong</div></a>
+      <a class="game-card" href="hyperflap/index.html"><img src="assets/games/hyperflap.jpg" alt="HyperFlap" /><div class="gname">HyperFlap</div></a>
+      <a class="game-card" href="hyperpop/index.html"><img src="assets/games/hyperpop.jpg" alt="HyperPop" /><div class="gname">HyperPop</div></a>
+      <a class="game-card" href="hypermatch/index.html"><img src="assets/games/hypermatch.jpg" alt="HyperMatch" /><div class="gname">HyperMatch</div></a>
+    </div>
+    <a href="hyperarcade/index.html" class="btn-secondary btn-game btn-arcade reveal">👾 Enter HyperArcade</a>
   </section>
 
   <!-- ── WAVE DIVIDER ── -->
