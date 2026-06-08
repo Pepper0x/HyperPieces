@@ -38,17 +38,14 @@
        a HyperLiquid-mint glowing disc shows as the fallback. */
     .sun {
       position: absolute; left: 50%; top: 22%;
-      width: 240px; height: 240px; transform: translate(-50%,-50%);
+      width: 220px; height: 220px; transform: translate(-50%,-50%);
       border-radius: 50%;
-      background:
-        url('../assets/hyperliquid-logo.png') center / 74% no-repeat,
-        radial-gradient(circle at 50% 42%, #cdfff2 0%, #4fdcc4 56%, #149e86 100%);
-      box-shadow: 0 0 70px rgba(80, 240, 200, 0.55), inset 0 0 30px rgba(255,255,255,0.25);
+      background: url('../assets/hyperliquid-logo.png') center / contain no-repeat;
       animation: emblem-pulse 4s ease-in-out infinite;
     }
     @keyframes emblem-pulse {
-      0%,100% { box-shadow: 0 0 60px rgba(80,240,200,0.45), inset 0 0 30px rgba(255,255,255,0.25); }
-      50%     { box-shadow: 0 0 90px rgba(80,240,200,0.75), inset 0 0 30px rgba(255,255,255,0.3); }
+      0%,100% { filter: drop-shadow(0 0 22px rgba(80,240,200,0.5)); }
+      50%     { filter: drop-shadow(0 0 40px rgba(80,240,200,0.85)); }
     }
     /* grid floor */
     .grid {
