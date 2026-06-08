@@ -305,6 +305,14 @@
       text-transform: uppercase; opacity: .5; margin: 0 0 36px;
     }
     .hero .btn-arcade { max-width: 320px; }
+    .hero-trade { display: flex; gap: 10px; margin-top: 16px; }
+    .hero-trade a {
+      font-family: var(--sans); font-size: 13px; color: var(--ink);
+      background: rgba(0,0,0,0.06); padding: 9px 16px; border-radius: 22px;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+      transition: background .2s, transform .15s;
+    }
+    .hero-trade a:hover { background: rgba(0,0,0,0.12); transform: translateY(-1px); }
 
     /* ── Story ── */
     .story {
@@ -412,6 +420,10 @@
     <p class="hero-tag fade-in">We never left.</p>
     <p class="hero-sub fade-in">2,222 pieces · One keeper · No exit</p>
     <a href="hyperarcade/index.html" class="btn-secondary btn-game btn-arcade fade-in">👾 Enter HyperArcade</a>
+    <div class="hero-trade fade-in">
+      <a href="https://opensea.io/collection/hyperpieces-hyperevm" target="_blank">🌊 OpenSea</a>
+      <a href="https://drip.trade/collections/hyperpieces?tab=items" target="_blank">💧 Drip.Trade</a>
+    </div>
     <a href="#story" class="scroll-cue" aria-label="Scroll to the story"><span class="chev">▾</span></a>
   </section>
 
@@ -437,7 +449,7 @@
     <div class="timeline">
       <div class="tl-item reveal">
         <div class="tl-date">March 20, 2025</div>
-        <div class="tl-title">The mint opens</div>
+        <div class="tl-title">Mint Day</div>
         <div class="tl-desc">Public mint goes live to a community excited to participate.</div>
       </div>
       <div class="tl-item reveal">
@@ -458,7 +470,7 @@
       <div class="tl-item now reveal">
         <div class="tl-date">Now</div>
         <div class="tl-title">The keeper era</div>
-        <div class="tl-desc">Rather than let the art die, one holder steps up to steward the IP. No roadmap, no promises. Just protecting what's already great.</div>
+        <div class="tl-desc">Rather than let the art die, Pepper adopted the collection as his own. Like the step dad who stepped up.</div>
       </div>
     </div>
     <p class="timeline-close reveal">New home, same energy. The art front and center, surrounded by community. Room to build.</p>
@@ -491,20 +503,12 @@
   <footer class="site-footer">
     <h3>HyperPieces</h3>
     <div class="footer-group">
-      <span class="label">Trade</span>
-      <div class="footer-links">
-        <a href="https://opensea.io/collection/hyperpieces-hyperevm" target="_blank">🌊 OpenSea</a>
-        <a href="https://drip.trade/collections/hyperpieces?tab=items" target="_blank">💧 Drip.Trade</a>
-      </div>
-    </div>
-    <div class="footer-group">
       <span class="label">Community</span>
       <div class="footer-links">
         <a href="https://x.com/HyperPiecesCTO" target="_blank">𝕏 Twitter</a>
         <a href="https://discord.gg/9nyuGTdqmz" target="_blank">💬 Discord</a>
       </div>
     </div>
-    <p class="footer-note">Kept by Pepper · Living on Hyperliquid</p>
   </footer>
 
   <!-- ── Scroll behaviour: sticky-nav state + reveal-on-scroll ── -->
