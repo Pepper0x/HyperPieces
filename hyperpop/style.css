@@ -1,0 +1,172 @@
+:root {
+  --mint: #8BF5C5;
+  --mint-dim: #5bbf97;
+  --bg: #0d1117;
+  --panel-bg: #161b22;
+  --board-top: #1a0535;
+  --board-bot: #3d0a52;
+  --text: #e6f5ee;
+  --danger: #ff5c5c;
+  --gold: #ffd700;
+  --pixel: 'Press Start 2P', cursive;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--pixel);
+  overflow: hidden;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+body { display: flex; align-items: center; justify-content: center; }
+
+.screen {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.screen.hidden { display: none; }
+
+.panel {
+  background: var(--panel-bg);
+  border: 2px solid var(--mint);
+  border-radius: 14px;
+  padding: 28px 24px;
+  width: 100%; max-width: 400px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(139,245,197,0.15);
+  max-height: 92vh; overflow-y: auto;
+}
+
+.logo {
+  font-family: 'Pacifico', cursive;
+  font-size: 2.4rem; color: var(--mint);
+  margin-bottom: 10px;
+  text-shadow: 0 2px 12px rgba(139,245,197,0.4);
+}
+h2 { font-size: 1rem; color: var(--mint); margin-bottom: 16px; line-height: 1.5; }
+.hint {
+  font-family: 'Pacifico', cursive; font-size: 1rem;
+  opacity: 0.7; margin-bottom: 20px; line-height: 1.4;
+}
+
+.name-entry { margin-bottom: 16px; }
+.name-entry label { display: block; font-size: 0.6rem; margin-bottom: 10px; opacity: 0.7; letter-spacing: 1px; }
+#player-name {
+  width: 100%; padding: 12px;
+  background: var(--bg); border: 2px solid var(--mint-dim);
+  border-radius: 8px; color: var(--text);
+  font-family: var(--pixel); font-size: 0.7rem; text-align: center;
+}
+#player-name:focus { outline: none; border-color: var(--mint); }
+.error { color: var(--danger); font-size: 0.55rem; height: 1em; margin-top: 8px; }
+
+/* ── Piece selector ── */
+.pick-label {
+  font-size: 0.55rem; letter-spacing: 2px; opacity: 0.7;
+  margin: 6px 0 12px; color: var(--mint);
+}
+.piece-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+  max-height: 210px; overflow-y: auto;
+  padding: 4px; margin-bottom: 18px;
+  background: rgba(0,0,0,0.25); border-radius: 8px;
+  border: 1px solid var(--mint-dim);
+}
+.piece {
+  aspect-ratio: 1; border-radius: 8px; overflow: hidden;
+  border: 2px solid transparent; cursor: pointer;
+  background: #0c1f18; position: relative;
+  transition: transform 0.1s, box-shadow 0.2s, border-color 0.15s;
+}
+.piece img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.piece:hover { transform: translateY(-2px); }
+.piece.sel {
+  border-color: var(--mint);
+  box-shadow: 0 0 12px var(--mint);
+}
+.piece.sel::after {
+  content: "✓"; position: absolute; top: 2px; right: 3px;
+  font-size: 8px; color: var(--mint); text-shadow: 0 0 4px #000;
+}
+.piece .wt {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  font-size: 6px; text-align: center; padding: 2px 0;
+  color: #fff; background: rgba(0,0,0,0.6); letter-spacing: 0.5px;
+}
+.weight-info {
+  font-size: 0.5rem; color: var(--text); opacity: 0.8;
+  margin: -8px 0 16px; line-height: 1.6;
+}
+.weight-info b { color: var(--mint); }
+
+/* ── Buttons ── */
+.btn {
+  display: block; width: 100%; padding: 14px; margin: 8px 0;
+  background: #21262d; color: var(--text); border: none; border-radius: 8px;
+  font-family: var(--pixel); font-size: 0.7rem; cursor: pointer;
+  transition: transform 0.12s, background 0.2s, box-shadow 0.2s;
+}
+.btn:hover { background: #2d343d; transform: translateY(-1px); }
+.btn-primary { background: var(--mint); color: #06281c; font-weight: bold; }
+.btn-primary:hover { background: #a3ffd6; box-shadow: 0 4px 18px rgba(139,245,197,0.35); }
+
+.back-link { display: inline-block; margin-top: 14px; color: var(--mint-dim); text-decoration: none; font-size: 0.55rem; letter-spacing: 1px; }
+.back-link:hover { color: var(--mint); }
+
+/* ── Leaderboard ── */
+#lb-list {
+  list-style: none; text-align: left;
+  background: rgba(0,0,0,0.3); border: 1px solid var(--mint-dim); border-radius: 8px;
+  margin-bottom: 18px; max-height: 300px; overflow-y: auto;
+}
+#lb-list li { border-bottom: 1px solid rgba(139,245,197,0.1); }
+#lb-list li:last-child { border-bottom: none; }
+.lb-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; font-size: 0.6rem; }
+.lb-row.you { background: rgba(255,215,0,0.12); }
+.lb-row .rank { min-width: 2em; text-align: center; font-size: 0.8rem; }
+.lb-row .nm { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lb-row .pts { color: var(--mint); font-weight: bold; }
+.lb-loading { padding: 16px; text-align: center; opacity: 0.5; font-size: 0.6rem; }
+.lb-message { font-size: 0.65rem; margin-bottom: 14px; line-height: 1.5; }
+
+/* ── Game screen ── */
+#game-screen { flex-direction: column; gap: 14px; }
+.hud {
+  display: flex; gap: 10px; width: 100%; max-width: 460px; justify-content: space-between;
+}
+.hud-item {
+  flex: 1; background: var(--panel-bg); border: 1px solid var(--mint-dim);
+  border-radius: 8px; padding: 10px 6px; font-size: 0.5rem; letter-spacing: 1px; opacity: 0.85;
+}
+.hud-item span { display: block; margin-top: 6px; font-size: 0.85rem; color: var(--mint); }
+
+.board-wrap {
+  position: relative; border: 2px solid var(--mint); border-radius: 10px;
+  overflow: hidden; box-shadow: 0 0 24px rgba(139,245,197,0.18);
+}
+#board { display: block; }
+
+.tap-hint {
+  position: absolute; left: 50%; top: 60%; transform: translate(-50%,-50%);
+  font-size: 0.7rem; color: #fff; text-shadow: 0 0 8px #000, 0 2px 4px #000;
+  letter-spacing: 1px; animation: pulse 1s infinite; pointer-events: none;
+}
+.tap-hint.hidden { display: none; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+.board-wrap.paused::after {
+  content: "PAUSED"; position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.7); color: var(--mint); font-size: 1rem; letter-spacing: 2px;
+}
+
+.controls-hint { font-size: 0.5rem; opacity: 0.45; text-align: center; letter-spacing: 0.5px; }
+
+@media (max-width: 420px) {
+  .logo { font-size: 2rem; }
+  .panel { padding: 22px 16px; }
+}

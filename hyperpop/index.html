@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>HyperPop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pacifico&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="../assets/arcade-theme.css" />
+</head>
+<body>
+
+  <!-- START -->
+  <div id="start-screen" class="screen active">
+    <div class="panel">
+      <h1 class="logo">HyperPop</h1>
+      <p class="hint">Aim, shoot, and match 3+ of the same color to pop them.</p>
+      <div class="name-entry">
+        <label for="player-name">Enter Your Name</label>
+        <input type="text" id="player-name" placeholder="Player Name" maxlength="15" autocomplete="off" />
+        <p id="name-error" class="error"></p>
+      </div>
+      <button id="start-btn" class="btn btn-primary">Start Game</button>
+      <button id="view-lb-btn" class="btn">Leaderboard</button>
+      <a href="../hyperarcade/index.html" class="back-link">← Back to Arcade</a>
+    </div>
+  </div>
+
+  <!-- LEADERBOARD -->
+  <div id="lb-screen" class="screen hidden">
+    <div class="panel">
+      <h2 id="lb-title">Global Leaderboard</h2>
+      <p id="lb-message" class="lb-message hidden"></p>
+      <ol id="lb-list"><li>Loading...</li></ol>
+      <button id="lb-again-btn" class="btn btn-primary">Play Again</button>
+      <button id="lb-menu-btn" class="btn">Main Menu</button>
+    </div>
+  </div>
+
+  <!-- GAME -->
+  <div id="game-screen" class="screen hidden">
+    <div class="hud">
+      <div class="hud-item">Score <span id="score">0</span></div>
+      <div class="hud-item">Best <span id="best">0</span></div>
+    </div>
+    <div class="board-wrap" id="board-wrap">
+      <canvas id="board"></canvas>
+    </div>
+    <p class="controls-hint">Aim with your finger / mouse · tap or click to shoot</p>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
