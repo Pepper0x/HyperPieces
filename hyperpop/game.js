@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
       G.grid.push(row);
     }
     G.current = randType(); G.next = randType();
-    G.moving = null; G.score = 0; G.over = false; G.shots = 0;
+    G.moving = null; G.falling = []; G.score = 0; G.over = false; G.shots = 0;
     el.score.textContent = '0'; el.best.textContent = G.best;
   }
 
@@ -162,10 +162,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (connected.has(k)) continue; connected.add(k);
       for (const [nr, nc] of neighbors(r, c)) if (G.grid[nr][nc] !== null) stack.push([nr, nc]);
     }
-    let dropped = 0;
+    const dropped = [];
     for (let r = 0; r < G.grid.length; r++)
       for (let c = 0; c < G.grid[r].length; c++)
-        if (G.grid[r][c] !== null && !connected.has(r + ',' + c)) { G.grid[r][c] = null; dropped++; }
+        if (G.grid[r][c] !== null && !connected.has(r + ',' + c)) {
+          dropped.push({ x: cellX(r, c), y: cellY(r), type: G.grid[r][c] });
+          G.grid[r][c] = null;
+        }
     return dropped;
   }
 
@@ -176,8 +179,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cluster.length >= 3) {
       for (const [cr, cc] of cluster) G.grid[cr][cc] = null;
       G.score += cluster.length * 10;
-      const dropped = dropFloating();
-      if (dropped) G.score += dropped * 20;
+      const dropped = dropFloating();   // disconnected stragglers tumble away
+      if (dropped.length) {
+        G.score += dropped.length * 20;
+        for (const d of dropped) G.falling.push({ x: d.x, y: d.y, type: d.type, vy: -R * 0.12, vx: (Math.random() - 0.5) * R * 0.2 });
+      }
       G.shots = 0;
     } else {
       G.shots++;
@@ -259,6 +265,9 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.stroke(); ctx.setLineDash([]);
     }
 
+    // falling stragglers
+    for (const f of G.falling) drawBubble(f.x, f.y, f.type);
+
     // moving bubble
     if (G.moving) drawBubble(G.moving.x, G.moving.y, G.moving.type);
 
@@ -267,9 +276,14 @@ document.addEventListener('DOMContentLoaded', () => {
     drawBubble(W - R * 1.2, H - R * 0.9, G.next, R * 0.7);
   }
 
+  function stepFalling() {
+    for (const f of G.falling) { f.vy += R * 0.05; f.y += f.vy; f.x += f.vx; }
+    G.falling = G.falling.filter(f => f.y - R < H + 6);
+  }
+
   function loop() {
     if (!G.running) return;
-    stepMoving(); draw();
+    stepMoving(); stepFalling(); draw();
     if (G.running) G.raf = requestAnimationFrame(loop);
   }
 

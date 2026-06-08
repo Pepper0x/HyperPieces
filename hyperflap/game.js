@@ -162,6 +162,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const margin = 40 * c.s;
     const gapY = margin + Math.random() * (c.h - c.gap - margin * 2);
     state.pipes.push({ x: c.w, gapY, scored: false });
+    // bonus piece sits HALFWAY to the next pipe, so it's always between
+    // pipe columns and can never overlap a pipe
+    if (Math.random() < 0.55) {
+      state.coins.push({ x: c.w + c.spawnDist / 2, y: gapY + c.gap / 2, r: c.birdSize * 0.4, taken: false, spin: 0 });
+    }
   }
 
   function update() {
@@ -206,13 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     state.pipes = state.pipes.filter(p => p.x + c.pipeW > -10);
 
-    // collectibles — bonus piece floats in a gap, +25 and a pop when grabbed
-    const lastCoin = state.coins[state.coins.length - 1];
-    if (state.pipes.length && (!lastCoin || (c.w - lastCoin.x) >= c.spawnDist * 1.7)) {
-      const ref = state.pipes[state.pipes.length - 1];
-      const cy = ref.gapY + c.gap / 2;
-      state.coins.push({ x: c.w + c.pipeW, y: cy, r: c.birdSize * 0.4, taken: false, spin: 0 });
-    }
+    // collectibles — move, collect (+25 and a pop), cull (spawned in spawnPipe)
     const bcx = b.x + b.size/2, bcy = b.y + b.size/2;
     for (const coin of state.coins) {
       coin.x -= c.pipeSpeed; coin.spin += 0.08;

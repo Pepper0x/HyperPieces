@@ -17,6 +17,12 @@
 
 body { background: linear-gradient(180deg, #1a0535 0%, #0a0014 100%) !important; }
 
+/* short caption under the logo (matches the other games) */
+#start-screen .hint {
+  font-family: 'Pacifico', cursive; font-size: 1rem;
+  color: #c9b8ff; opacity: 0.8; margin: -6px 0 22px;
+}
+
 /* Start-screen title styled like the other games' logos */
 #start-screen h1 {
   font-family: 'Pacifico', cursive !important;
