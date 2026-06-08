@@ -334,11 +334,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (ang < -Math.PI + 0.15) ang = -Math.PI + 0.15;
     G.aim = ang;
   }
-  el.canvas.addEventListener('pointermove', e => { if (!el.gameScreen.classList.contains('hidden')) setAim(e.clientX, e.clientY); });
+  // Mobile-friendly: press & drag to aim, release to shoot.
+  let aiming = false;
+  el.canvas.style.touchAction = 'none';
   el.canvas.addEventListener('pointerdown', e => {
     if (el.gameScreen.classList.contains('hidden')) return;
-    e.preventDefault(); setAim(e.clientX, e.clientY); shoot();
+    e.preventDefault(); aiming = true; setAim(e.clientX, e.clientY);
   });
+  el.canvas.addEventListener('pointermove', e => {
+    if (el.gameScreen.classList.contains('hidden')) return;
+    if (aiming || e.pointerType === 'mouse') setAim(e.clientX, e.clientY);
+  });
+  window.addEventListener('pointerup', e => {
+    if (!aiming || el.gameScreen.classList.contains('hidden')) { aiming = false; return; }
+    aiming = false; setAim(e.clientX, e.clientY); shoot();
+  });
+  window.addEventListener('pointercancel', () => { aiming = false; });
   window.addEventListener('resize', () => { if (G.running) { sizeBoard(); draw(); } });
 
   // ── UI ──
