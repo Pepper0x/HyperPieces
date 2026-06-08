@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0; padding: 0;
@@ -87,6 +88,21 @@
       box-shadow: 0 6px 22px rgba(139,245,197,0.5);
     }
     .btn-arcade { width: 100%; font-size: 17px; padding: 20px 10px; }
+    .btn-full { width: 100%; }
+
+    /* Scroll cue — invites the user down to the trait library */
+    .scroll-cue {
+      margin-top: 30px;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      text-decoration: none; color: #000; opacity: 0.55;
+      font-family: 'Pacifico', cursive; font-size: 15px;
+      transition: opacity 0.2s;
+      animation: bob 1.8s ease-in-out infinite;
+    }
+    .scroll-cue:hover { opacity: 0.9; }
+    .scroll-cue .chev { font-size: 22px; line-height: 0.6; }
+    @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(7px); } }
+    @media (prefers-reduced-motion: reduce) { .scroll-cue { animation: none; } }
 
     /* ── Divider before traits ── */
     .section-divider {
@@ -298,6 +314,17 @@
         </a>
       </div>
     </div>
+
+    <!-- Explore -->
+    <div class="action-section fade-in">
+      <p class="action-label">Explore</p>
+      <a href="#traits" class="btn-secondary btn-full">🔍 Trait Library</a>
+    </div>
+
+    <!-- Scroll cue -->
+    <a href="#traits" class="scroll-cue" aria-label="Scroll to Trait Library">
+      <span class="chev">▾</span>
+    </a>
   </section>
 
   <!-- ── WAVE DIVIDER ── -->
@@ -308,7 +335,7 @@
   </div>
 
   <!-- ── TRAIT LIBRARY ── -->
-  <section class="trait-library">
+  <section class="trait-library" id="traits">
     <div class="trait-library-inner">
       <h2>Trait Library</h2>
       <p class="subtitle">6 categories &nbsp;·&nbsp; 72 traits &nbsp;·&nbsp; 15 one-of-ones</p>
