@@ -284,14 +284,22 @@
       -webkit-backdrop-filter: saturate(140%) blur(10px);
       box-shadow: 0 1px 16px rgba(0,0,0,0.08); padding: 10px 20px;
     }
-    .site-nav .brand { font-family: 'Pacifico', cursive; font-size: 22px; color: var(--ink); text-decoration: none; }
+    .site-nav .brand { font-family: 'Pacifico', cursive; font-size: 22px; color: #fff; text-decoration: none; transition: color .3s; }
     .nav-links { display: flex; gap: 22px; align-items: center; }
     .nav-links a {
       font-family: var(--sans); font-size: 12px; letter-spacing: 1.5px;
-      text-transform: uppercase; color: var(--ink); text-decoration: none;
-      opacity: .65; transition: opacity .2s;
+      text-transform: uppercase; color: #fff; text-decoration: none;
+      opacity: .75; transition: opacity .2s, color .3s;
     }
     .nav-links a:hover { opacity: 1; }
+    /* once scrolled past the black header, flip nav text to dark on the mint frost */
+    .site-nav.scrolled .brand,
+    .site-nav.scrolled .nav-links a { color: var(--ink); }
+
+    /* ── Black wavy header (bookends the footer) ── */
+    .top-wave { width: 100%; line-height: 0; }
+    .top-wave svg { width: 100%; height: 88px; display: block; }
+    .top-wave svg path { fill: var(--ink); }
     @media (max-width: 520px) { .nav-links { gap: 14px; } .nav-links a { font-size: 11px; letter-spacing: 1px; } }
 
     /* ── Hero refinements ── */
@@ -435,6 +443,13 @@
       <a href="#traits">Traits</a>
     </div>
   </nav>
+
+  <!-- ── BLACK WAVY HEADER ── -->
+  <div class="top-wave">
+    <svg viewBox="0 0 1440 88" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,0 L1440,0 L1440,52 C1080,84 360,20 0,52 Z"/>
+    </svg>
+  </div>
 
   <!-- ── HERO ── -->
   <section class="hero" id="top">
